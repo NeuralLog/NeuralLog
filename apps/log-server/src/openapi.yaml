@@ -1,0 +1,844 @@
+openapi: 3.0.0
+info:
+  title: NeuralLog API
+  description: API for the NeuralLog logging service
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: NeuralLog API v1
+paths:
+  /logs:
+    get:
+      summary: Get all logs
+      operationId: getLogs
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      responses:
+        '200':
+          description: A list of logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Log'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      summary: Create a new log
+      operationId: createLog
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Log'
+      responses:
+        '201':
+          description: The created log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /logs/{logName}:
+    get:
+      summary: Get a log by name
+      operationId: getLog
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: logName
+          schema:
+            type: string
+          required: true
+          description: Log name
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      responses:
+        '200':
+          description: The requested log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    put:
+      summary: Update a log
+      operationId: updateLog
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: logName
+          schema:
+            type: string
+          required: true
+          description: Log name
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogUpdate'
+      responses:
+        '200':
+          description: The updated log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      summary: Delete a log
+      operationId: deleteLog
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: logName
+          schema:
+            type: string
+          required: true
+          description: Log name
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      responses:
+        '204':
+          description: Log deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /logs/{logName}/entries:
+    get:
+      summary: Get log entries
+      operationId: getLogEntries
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: logName
+          schema:
+            type: string
+          required: true
+          description: Log name
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+          description: Maximum number of entries to return
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Offset for pagination
+      responses:
+        '200':
+          description: Log entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogEntries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      summary: Append a log entry
+      operationId: appendLogEntry
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: logName
+          schema:
+            type: string
+          required: true
+          description: Log name
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogEntry'
+      responses:
+        '201':
+          description: Log entry created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  id:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /logs/{logName}/entries/batch:
+    post:
+      summary: Batch append log entries
+      operationId: batchAppendLogEntries
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: logName
+          schema:
+            type: string
+          required: true
+          description: Log name
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - entries
+              properties:
+                entries:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LogEntry'
+      responses:
+        '201':
+          description: Log entries created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: date-time
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /logs/{logName}/search:
+    post:
+      summary: Search log entries
+      operationId: searchLogEntries
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: logName
+          schema:
+            type: string
+          required: true
+          description: Log name
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogSearchOptions'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogEntries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /permissions/check:
+    post:
+      summary: Check if a user has permission to perform an action on a resource
+      operationId: checkPermission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionCheckRequest'
+      responses:
+        '200':
+          description: Permission check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionCheckResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /retention-policy:
+    get:
+      summary: Get the retention policy for a tenant or specific log
+      operationId: getRetentionPolicy
+      tags:
+        - Retention Policy
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+        - in: query
+          name: logName
+          schema:
+            type: string
+          required: false
+          description: Log name (encrypted) - if not provided, returns the tenant-wide default policy
+      responses:
+        '200':
+          description: The retention policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetentionPolicy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      summary: Set the retention policy for a tenant or specific log
+      operationId: setRetentionPolicy
+      tags:
+        - Retention Policy
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetentionPolicyRequest'
+      responses:
+        '200':
+          description: The updated retention policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetentionPolicy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      summary: Delete the retention policy for a tenant or specific log
+      operationId: deleteRetentionPolicy
+      tags:
+        - Retention Policy
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+        - in: query
+          name: logName
+          schema:
+            type: string
+          required: false
+          description: Log name (encrypted) - if not provided, deletes the tenant-wide default policy
+      responses:
+        '204':
+          description: Retention policy deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /retention-policy/all:
+    get:
+      summary: Get all retention policies for a tenant
+      operationId: getAllRetentionPolicies
+      tags:
+        - Retention Policy
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+      responses:
+        '200':
+          description: All retention policies for the tenant
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RetentionPolicy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /retention-policy/expired-count:
+    get:
+      summary: Get the count of logs that would be affected by a retention policy change
+      operationId: getExpiredLogsCount
+      tags:
+        - Retention Policy
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: x-tenant-id
+          schema:
+            type: string
+          required: true
+          description: Tenant ID
+        - in: query
+          name: retentionPeriodMs
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Retention period in milliseconds
+        - in: query
+          name: logName
+          schema:
+            type: string
+          required: false
+          description: Log name (encrypted) - if provided, gets the count for this specific log
+      responses:
+        '200':
+          description: The count of logs that would be affected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of logs that would be affected
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Log:
+      type: object
+      required:
+        - name
+        - tenantId
+      properties:
+        id:
+          type: string
+          description: Log ID
+        name:
+          type: string
+          description: Log name
+        description:
+          type: string
+          description: Log description
+        tenantId:
+          type: string
+          description: Tenant ID
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        retentionDays:
+          type: integer
+          description: Number of days to retain log entries
+        encryptionEnabled:
+          type: boolean
+          description: Whether encryption is enabled for this log
+    LogUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Log description
+        retentionDays:
+          type: integer
+          description: Number of days to retain log entries
+        encryptionEnabled:
+          type: boolean
+          description: Whether encryption is enabled for this log
+    LogEntry:
+      type: object
+      required:
+        - data
+        - logId
+      properties:
+        id:
+          type: string
+          description: Log entry ID
+        logId:
+          type: string
+          description: Log ID
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp
+        data:
+          type: object
+          description: Log entry data
+        searchTokens:
+          type: array
+          items:
+            type: string
+          description: Search tokens
+        encryptionInfo:
+          type: object
+          properties:
+            version:
+              type: string
+              description: Encryption version
+            algorithm:
+              type: string
+              description: Encryption algorithm
+    LogSearchOptions:
+      type: object
+      properties:
+        query:
+          type: string
+          description: Search query
+        searchTokens:
+          type: array
+          items:
+            type: string
+          description: Search tokens
+        limit:
+          type: integer
+          minimum: 1
+          default: 10
+          description: Maximum number of entries to return
+        offset:
+          type: integer
+          minimum: 0
+          default: 0
+          description: Offset for pagination
+    PaginatedLogEntries:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogEntry'
+        total:
+          type: integer
+          description: Total number of entries
+        limit:
+          type: integer
+          description: Maximum number of entries returned
+        offset:
+          type: integer
+          description: Offset for pagination
+        hasMore:
+          type: boolean
+          description: Whether there are more entries
+    PermissionCheckRequest:
+      type: object
+      required:
+        - action
+        - resource
+      properties:
+        action:
+          type: string
+          description: Action to check (e.g., read, write, delete)
+          example: read
+        resource:
+          type: string
+          description: Resource to check permission for
+          example: logs/test-log
+        contextualTuples:
+          type: array
+          items:
+            type: object
+            properties:
+              user:
+                type: string
+                description: User identifier
+                example: user:123
+              relation:
+                type: string
+                description: Relation type
+                example: member
+              object:
+                type: string
+                description: Object identifier
+                example: group:456
+    PermissionCheckResponse:
+      type: object
+      required:
+        - allowed
+      properties:
+        allowed:
+          type: boolean
+          description: Whether the permission is allowed
+    RetentionPolicy:
+      type: object
+      required:
+        - tenantId
+        - retentionPeriodMs
+      properties:
+        tenantId:
+          type: string
+          description: Tenant ID
+        logName:
+          type: string
+          description: Log name (encrypted) - if not present, this is the tenant-wide default policy
+        retentionPeriodMs:
+          type: integer
+          format: int64
+          description: Retention period in milliseconds (-1 for unlimited retention)
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        createdBy:
+          type: string
+          description: User ID of the user who created the policy
+        updatedBy:
+          type: string
+          description: User ID of the user who last updated the policy
+    RetentionPolicyRequest:
+      type: object
+      required:
+        - retentionPeriodMs
+      properties:
+        retentionPeriodMs:
+          type: integer
+          format: int64
+          description: Retention period in milliseconds (-1 for unlimited retention)
+        logName:
+          type: string
+          description: Log name (encrypted) - if not provided, sets the tenant-wide default policy
+    Error:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+        code:
+          type: string
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
