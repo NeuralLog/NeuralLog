@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Stepper,
-  Step,
-  StepLabel,
-  Button,
-  CircularProgress,
-  Alert
-} from '@mui/material';
+import { Button } from '@/components/ui/Button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { InitiateRecoveryStep } from './InitiateRecoveryStep';
 import { CollectSharesStep } from './CollectSharesStep';
 import { CompleteRecoveryStep } from './CompleteRecoveryStep';
@@ -112,30 +104,45 @@ const KEKRecoveryFlow: React.FC<KEKRecoveryFlowProps> = ({ onComplete, onCancel 
   };
   
   return (
-    <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      
+    <div className="w-full">
+      {/* Simple stepper replacement */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          {steps.map((label, index) => (
+            <div key={label} className="flex items-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                index <= activeStep ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+              }`}>
+                {index + 1}
+              </div>
+              <span className={`ml-2 text-sm ${index <= activeStep ? 'text-foreground' : 'text-muted-foreground'}`}>
+                {label}
+              </span>
+              {index < steps.length - 1 && (
+                <div className={`w-16 h-0.5 mx-4 ${index < activeStep ? 'bg-primary' : 'bg-muted'}`} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
+        <Alert className="mb-6 border-red-200 bg-red-50">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
+
       {success ? (
-        <Box sx={{ mt: 2, mb: 1 }}>
-          <Alert severity="success">
-            KEK recovery completed successfully!
+        <div className="mt-4 mb-2">
+          <Alert className="border-green-200 bg-green-50">
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>KEK recovery completed successfully!</AlertDescription>
           </Alert>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+          <div className="flex justify-end mt-6">
             <Button onClick={onComplete}>Close</Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
       ) : (
         <>
           {activeStep === 0 && (
@@ -165,24 +172,26 @@ const KEKRecoveryFlow: React.FC<KEKRecoveryFlowProps> = ({ onComplete, onCancel 
           )}
           
           {activeStep !== 0 && activeStep !== steps.length && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+            <div className="flex justify-between mt-6">
               <Button
+                variant="outline"
                 onClick={handleBack}
                 disabled={loading}
               >
                 Back
               </Button>
               <Button
+                variant="outline"
                 onClick={onCancel}
                 disabled={loading}
               >
                 Cancel
               </Button>
-            </Box>
+            </div>
           )}
         </>
       )}
-    </Box>
+    </div>
   );
 };
 

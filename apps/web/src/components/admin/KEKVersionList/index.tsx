@@ -1,19 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  IconButton,
-  CircularProgress,
-  Alert,
-  Tooltip
-} from '@mui/material';
-import {
-  Refresh as RefreshIcon,
-  Add as AddIcon,
-  Autorenew as AutorenewIcon,
-  Key as KeyIcon
-} from '@mui/icons-material';
+import { Button } from '@/components/ui/Button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { FiRefreshCw, FiPlus, FiRotateCcw, FiKey } from 'react-icons/fi';
 import { useAuth } from '../../../contexts/AuthContext';
 import { KEKVersionTable } from './KEKVersionTable';
 import { CreateKEKDialog } from './CreateKEKDialog';
@@ -73,59 +61,63 @@ const KEKVersionList: React.FC = () => {
   };
   
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6">
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">
           Key Encryption Key (KEK) Versions
-        </Typography>
-        
-        <Box>
+        </h2>
+
+        <div className="flex gap-2">
           <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
             onClick={() => setCreateDialogOpen(true)}
-            sx={{ mr: 1 }}
+            className="flex items-center gap-2"
           >
+            <FiPlus className="w-4 h-4" />
             Create Version
           </Button>
-          
+
           <Button
-            variant="contained"
-            color="secondary"
-            startIcon={<AutorenewIcon />}
+            variant="secondary"
             onClick={() => setRotateDialogOpen(true)}
-            sx={{ mr: 1 }}
+            className="flex items-center gap-2"
           >
+            <FiRotateCcw className="w-4 h-4" />
             Rotate KEK
           </Button>
-          
+
           <Button
-            variant="outlined"
-            startIcon={<KeyIcon />}
+            variant="outline"
             onClick={() => setReencryptDialogOpen(true)}
-            sx={{ mr: 1 }}
+            className="flex items-center gap-2"
           >
+            <FiKey className="w-4 h-4" />
             Re-encrypt Logs
           </Button>
-          
-          <Tooltip title="Refresh">
-            <IconButton onClick={fetchKEKVersions} disabled={loading}>
-              <RefreshIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Box>
-      
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchKEKVersions}
+            disabled={loading}
+            className="flex items-center gap-2"
+            title="Refresh"
+          >
+            <FiRefreshCw className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
+        <Alert className="mb-6 border-red-200 bg-red-50">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
+
       {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          {success}
+        <Alert className="mb-6 border-green-200 bg-green-50">
+          <AlertTitle>Success</AlertTitle>
+          <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
       
@@ -160,7 +152,7 @@ const KEKVersionList: React.FC = () => {
           handleSuccess(message);
         }}
       />
-    </Box>
+    </div>
   );
 };
 

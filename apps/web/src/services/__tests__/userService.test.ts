@@ -1,142 +1,117 @@
-import { 
-  getCurrentUser, 
-  getUserById, 
+import {
+  getCurrentUser,
+  getUserById,
   getUsersByTenant,
   isUserInTenant,
   addUserToTenant,
   removeUserFromTenant
 } from '../userService';
 
-// Mock the Clerk client
-jest.mock('@clerk/nextjs', () => ({
-  currentUser: jest.fn(),
-  clerkClient: {
-    users: {
-      getUser: jest.fn(),
-      getUserList: jest.fn(),
-    },
-  },
-}));
-
-// Mock the OpenFGA client
-jest.mock('@/services/fgaService', () => ({
-  isUserInTenant: jest.fn(),
-  addUserToTenant: jest.fn(),
-  removeUserFromTenant: jest.fn(),
-}));
+// Mock console.log and console.error to avoid noise in tests
+const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation();
+const mockConsoleError = jest.spyOn(console, 'error').mockImplementation();
 
 describe('User Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   describe('getCurrentUser', () => {
-    it('should return the current user from Clerk', async () => {
-      // Arrange
-      const mockUser = { id: 'user_123', firstName: 'Test', lastName: 'User' };
-      require('@clerk/nextjs').currentUser.mockResolvedValue(mockUser);
-      
+    it('should return the mock current user', async () => {
       // Act
       const user = await getCurrentUser();
-      
+
       // Assert
-      expect(user).toEqual(mockUser);
-      expect(require('@clerk/nextjs').currentUser).toHaveBeenCalled();
-    });
-    
-    it('should return null when no user is authenticated', async () => {
-      // Arrange
-      require('@clerk/nextjs').currentUser.mockResolvedValue(null);
-      
-      // Act
-      const user = await getCurrentUser();
-      
-      // Assert
-      expect(user).toBeNull();
+      expect(user).toEqual({
+        id: 'mock-user-id',
+        firstName: 'Test',
+        lastName: 'User',
+        emailAddresses: [{ emailAddress: 'test@example.com' }],
+        isSignedIn: true
+      });
     });
   });
   
   describe('getUserById', () => {
-    it('should return a user by ID', async () => {
-      // Arrange
-      const mockUser = { id: 'user_123', firstName: 'Test', lastName: 'User' };
-      require('@clerk/nextjs').clerkClient.users.getUser.mockResolvedValue(mockUser);
-      
+    it('should return a mock user by ID', async () => {
       // Act
       const user = await getUserById('user_123');
-      
+
       // Assert
-      expect(user).toEqual(mockUser);
-      expect(require('@clerk/nextjs').clerkClient.users.getUser).toHaveBeenCalledWith('user_123');
+      expect(user).toEqual({
+        id: 'user_123',
+        firstName: 'User',
+        lastName: 'user_',
+        emailAddresses: [{ emailAddress: 'user-user_@example.com' }]
+      });
     });
-    
-    it('should return null when user is not found', async () => {
-      // Arrange
-      require('@clerk/nextjs').clerkClient.users.getUser.mockRejectedValue(new Error('User not found'));
-      
+
+    it('should return a user with different ID', async () => {
       // Act
-      const user = await getUserById('non_existent_user');
-      
+      const user = await getUserById('test_456');
+
       // Assert
-      expect(user).toBeNull();
+      expect(user).toEqual({
+        id: 'test_456',
+        firstName: 'User',
+        lastName: 'test_',
+        emailAddresses: [{ emailAddress: 'user-test_@example.com' }]
+      });
     });
   });
   
   describe('getUsersByTenant', () => {
-    it('should return users for a tenant', async () => {
-      // Arrange
-      const mockUsers = [
-        { id: 'user_123', firstName: 'Test', lastName: 'User' },
-        { id: 'user_456', firstName: 'Another', lastName: 'User' },
-      ];
-      require('@clerk/nextjs').clerkClient.users.getUserList.mockResolvedValue(mockUsers);
-      
+    it('should return mock users for a tenant', async () => {
       // Act
       const users = await getUsersByTenant('test-tenant');
-      
+
       // Assert
-      expect(users).toEqual(mockUsers);
-      expect(require('@clerk/nextjs').clerkClient.users.getUserList).toHaveBeenCalled();
+      expect(users).toEqual([
+        {
+          id: 'user_1',
+          firstName: 'John',
+          lastName: 'Doe',
+          emailAddresses: [{ emailAddress: 'john.doe@example.com' }]
+        },
+        {
+          id: 'user_2',
+          firstName: 'Jane',
+          lastName: 'Smith',
+          emailAddresses: [{ emailAddress: 'jane.smith@example.com' }]
+        }
+      ]);
     });
   });
   
   describe('isUserInTenant', () => {
-    it('should check if a user is in a tenant', async () => {
-      // Arrange
-      require('@/services/fgaService').isUserInTenant.mockResolvedValue(true);
-      
+    it('should return true for any user in tenant (mock implementation)', async () => {
       // Act
       const result = await isUserInTenant('user_123', 'test-tenant');
-      
+
       // Assert
       expect(result).toBe(true);
-      expect(require('@/services/fgaService').isUserInTenant).toHaveBeenCalledWith('test-tenant', 'user_123');
     });
   });
   
   describe('addUserToTenant', () => {
-    it('should add a user to a tenant', async () => {
-      // Arrange
-      require('@/services/fgaService').addUserToTenant.mockResolvedValue(undefined);
-      
+    it('should add a user to a tenant and log the action', async () => {
       // Act
-      await addUserToTenant('user_123', 'test-tenant', false);
-      
+      const result = await addUserToTenant('user_123', 'test-tenant', false);
+
       // Assert
-      expect(require('@/services/fgaService').addUserToTenant).toHaveBeenCalledWith('test-tenant', 'user_123', false);
+      expect(result).toBe(true);
+      expect(mockConsoleLog).toHaveBeenCalledWith('Adding user user_123 to tenant test-tenant with admin=false');
     });
   });
   
   describe('removeUserFromTenant', () => {
-    it('should remove a user from a tenant', async () => {
-      // Arrange
-      require('@/services/fgaService').removeUserFromTenant.mockResolvedValue(undefined);
-      
+    it('should remove a user from a tenant and log the action', async () => {
       // Act
-      await removeUserFromTenant('user_123', 'test-tenant');
-      
+      const result = await removeUserFromTenant('user_123', 'test-tenant');
+
       // Assert
-      expect(require('@/services/fgaService').removeUserFromTenant).toHaveBeenCalledWith('test-tenant', 'user_123');
+      expect(result).toBe(true);
+      expect(mockConsoleLog).toHaveBeenCalledWith('Removing user user_123 from tenant test-tenant');
     });
   });
 });

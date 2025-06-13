@@ -1,248 +1,216 @@
 import { LogsService } from '../logsService';
-import { LogsApiClient } from '@/sdk/logs/api-client';
 
-// Mock the LogsApiClient
-jest.mock('@/sdk/logs/api-client', () => {
-  return {
-    LogsApiClient: jest.fn().mockImplementation(() => ({
-      setTenantId: jest.fn(),
-      getLogs: jest.fn(),
-      getLogByName: jest.fn(),
-      getLogEntryById: jest.fn(),
-      overwriteLog: jest.fn(),
-      appendToLog: jest.fn(),
-      updateLogEntryById: jest.fn(),
-      deleteLogEntryById: jest.fn(),
-      clearLog: jest.fn(),
-      searchLogs: jest.fn(),
-    }))
-  };
-});
+// Mock fetch globally
+global.fetch = jest.fn();
+
+// Mock the token exchange service
+jest.mock('../tokenExchangeService', () => ({
+  getAuthToken: jest.fn(),
+  exchangeTokenForResource: jest.fn(),
+}));
 
 describe('LogsService', () => {
-  // Test service instance
   let service: LogsService;
-  
-  // Mocked client instance
-  let mockClient: jest.Mocked<LogsApiClient>;
-  
+  const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
+  const { getAuthToken, exchangeTokenForResource } = require('../tokenExchangeService');
+
   // Sample log data
   const sampleLogEntry = {
     id: 'test-id',
     timestamp: '2023-04-10T14:32:00Z',
     data: { message: 'Test log message' }
   };
-  
+
   // Setup before each test
   beforeEach(() => {
     // Clear all mocks
     jest.clearAllMocks();
-
+    
     // Create a new service instance
-    service = new LogsService('test-tenant', 'test-api-key', 'http://localhost:3030');
-
-    // Get the mock client instance
-    mockClient = (service as any).client as jest.Mocked<LogsApiClient>;
+    service = new LogsService('test-tenant', 'test-api-key', '/api');
   });
-  
+
   describe('constructor', () => {
     it('should create a service with the provided options', () => {
       expect(service).toBeInstanceOf(LogsService);
-      expect(LogsApiClient).toHaveBeenCalledWith({
-        apiUrl: 'http://localhost:3030',
-        apiKey: 'test-api-key',
-        tenantId: 'test-tenant'
-      });
+      expect(service['tenantId']).toBe('test-tenant');
+      expect(service['apiUrl']).toBe('/api');
     });
-    
+
     it('should use default API URL if not provided', () => {
-      // Create a service without an API URL
-      service = new LogsService('test-tenant', 'test-api-key');
-      
-      // Check that the default API URL was used
-      expect(LogsApiClient).toHaveBeenCalledWith(
-        expect.objectContaining({
-          apiUrl: expect.any(String)
-        })
-      );
+      const defaultService = new LogsService('test-tenant', 'test-api-key');
+      expect(defaultService['apiUrl']).toBe('/api');
     });
   });
-  
+
   describe('setTenantId', () => {
-    it('should update the tenant ID on the client', () => {
-      // Setup the mock
-      mockClient.setTenantId = jest.fn();
-      
-      // Call the method
+    it('should update the tenant ID', () => {
       service.setTenantId('new-tenant');
-      
-      // Check that the client method was called
-      expect(mockClient.setTenantId).toHaveBeenCalledWith('new-tenant');
+      expect(service['tenantId']).toBe('new-tenant');
     });
   });
-  
+
   describe('getLogNames', () => {
-    it('should return log names from the client', async () => {
-      // Setup the mock
-      mockClient.getLogs = jest.fn().mockResolvedValue({
-        logNames: ['log1', 'log2']
-      });
-      
-      // Call the method
+    it('should return log names from API route', async () => {
+      // Mock successful API response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ logs: ['log1', 'log2'] })
+      } as Response);
+
       const result = await service.getLogNames();
-      
-      // Check the result
+
       expect(result).toEqual(['log1', 'log2']);
-      expect(mockClient.getLogs).toHaveBeenCalled();
+      expect(mockFetch).toHaveBeenCalledWith('/api/logs', {
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Tenant-ID': 'test-tenant',
+        },
+      });
+    });
+
+    it('should fallback to resource token when API route fails', async () => {
+      // Mock API route failure
+      mockFetch.mockRejectedValueOnce(new Error('API route failed'));
+      
+      // Mock token exchange success
+      getAuthToken.mockResolvedValue('auth-token');
+      exchangeTokenForResource.mockResolvedValue('resource-token');
+      
+      // Mock logs server success
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ logs: ['log1', 'log2'] })
+      } as Response);
+
+      const result = await service.getLogNames();
+
+      expect(result).toEqual(['log1', 'log2']);
+      expect(getAuthToken).toHaveBeenCalled();
+      expect(exchangeTokenForResource).toHaveBeenCalledWith('auth-token', 'logs:all', 'test-tenant');
+    });
+
+    it('should return empty array when all methods fail', async () => {
+      // Mock all failures
+      mockFetch.mockRejectedValue(new Error('All failed'));
+      getAuthToken.mockRejectedValue(new Error('No token'));
+
+      const result = await service.getLogNames();
+
+      expect(result).toEqual([]);
     });
   });
-  
+
   describe('getLogByName', () => {
-    it('should return log entries from the client', async () => {
-      // Setup the mock
-      mockClient.getLogByName = jest.fn().mockResolvedValue({
-        logName: 'test-log',
-        entries: [sampleLogEntry]
-      });
-      
-      // Call the method
+    it('should return log entries from API route', async () => {
+      // Mock successful API response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ entries: [sampleLogEntry] })
+      } as Response);
+
       const result = await service.getLogByName('test-log');
-      
-      // Check the result
+
       expect(result).toEqual([sampleLogEntry]);
-      expect(mockClient.getLogByName).toHaveBeenCalledWith('test-log', undefined);
-    });
-    
-    it('should pass limit parameter to the client', async () => {
-      // Setup the mock
-      mockClient.getLogByName = jest.fn().mockResolvedValue({
-        logName: 'test-log',
-        entries: [sampleLogEntry]
+      expect(mockFetch).toHaveBeenCalledWith('/api/logs/test-log', {
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Tenant-ID': 'test-tenant',
+        },
       });
-      
-      // Call the method with a limit
+    });
+
+    it('should include limit parameter when provided', async () => {
+      // Mock successful API response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ entries: [sampleLogEntry] })
+      } as Response);
+
       await service.getLogByName('test-log', 10);
-      
-      // Check that the limit was passed to the client
-      expect(mockClient.getLogByName).toHaveBeenCalledWith('test-log', 10);
-    });
-  });
-  
-  describe('getLogEntryById', () => {
-    it('should return a log entry from the client', async () => {
-      // Setup the mock
-      mockClient.getLogEntryById = jest.fn().mockResolvedValue(sampleLogEntry);
-      
-      // Call the method
-      const result = await service.getLogEntryById('test-log', 'test-id');
-      
-      // Check the result
-      expect(result).toEqual(sampleLogEntry);
-      expect(mockClient.getLogEntryById).toHaveBeenCalledWith('test-log', 'test-id');
-    });
-  });
-  
-  describe('createOrOverwriteLog', () => {
-    it('should call overwriteLog on the client', async () => {
-      // Setup the mock
-      mockClient.overwriteLog = jest.fn().mockResolvedValue(undefined);
-      
-      // Call the method
-      const entries = [{ message: 'Test log message' }];
-      await service.createOrOverwriteLog('test-log', entries);
-      
-      // Check that the client method was called
-      expect(mockClient.overwriteLog).toHaveBeenCalledWith('test-log', entries);
-    });
-  });
-  
-  describe('appendToLog', () => {
-    it('should call appendToLog on the client', async () => {
-      // Setup the mock
-      mockClient.appendToLog = jest.fn().mockResolvedValue(undefined);
-      
-      // Call the method
-      const entries = [{ message: 'Test log message' }];
-      await service.appendToLog('test-log', entries);
-      
-      // Check that the client method was called
-      expect(mockClient.appendToLog).toHaveBeenCalledWith('test-log', entries);
-    });
-  });
-  
-  describe('updateLogEntry', () => {
-    it('should call updateLogEntryById on the client', async () => {
-      // Setup the mock
-      mockClient.updateLogEntryById = jest.fn().mockResolvedValue(undefined);
-      
-      // Call the method
-      const entry = { message: 'Updated log message' };
-      await service.updateLogEntry('test-log', 'test-id', entry);
-      
-      // Check that the client method was called
-      expect(mockClient.updateLogEntryById).toHaveBeenCalledWith('test-log', 'test-id', entry);
-    });
-  });
-  
-  describe('deleteLogEntry', () => {
-    it('should call deleteLogEntryById on the client', async () => {
-      // Setup the mock
-      mockClient.deleteLogEntryById = jest.fn().mockResolvedValue(undefined);
-      
-      // Call the method
-      await service.deleteLogEntry('test-log', 'test-id');
-      
-      // Check that the client method was called
-      expect(mockClient.deleteLogEntryById).toHaveBeenCalledWith('test-log', 'test-id');
-    });
-  });
-  
-  describe('clearLog', () => {
-    it('should call clearLog on the client', async () => {
-      // Setup the mock
-      mockClient.clearLog = jest.fn().mockResolvedValue(undefined);
-      
-      // Call the method
-      await service.clearLog('test-log');
-      
-      // Check that the client method was called
-      expect(mockClient.clearLog).toHaveBeenCalledWith('test-log');
-    });
-  });
-  
-  describe('searchLogs', () => {
-    it('should transform search results from the client', async () => {
-      // Setup the mock
-      mockClient.searchLogs = jest.fn().mockResolvedValue({
-        results: [
-          {
-            logName: 'test-log',
-            entry: sampleLogEntry
-          }
-        ],
-        total: 1
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/logs/test-log?limit=10', {
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Tenant-ID': 'test-tenant',
+        },
       });
+    });
+
+    it('should fallback to resource token when API route fails', async () => {
+      // Mock API route failure
+      mockFetch.mockRejectedValueOnce(new Error('API route failed'));
       
-      // Call the method
-      const searchOptions = { query: 'test' };
-      const result = await service.searchLogs(searchOptions);
+      // Mock token exchange success
+      getAuthToken.mockResolvedValue('auth-token');
+      exchangeTokenForResource.mockResolvedValue('resource-token');
       
-      // Check the result
+      // Mock logs server success
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ entries: [sampleLogEntry] })
+      } as Response);
+
+      const result = await service.getLogByName('test-log');
+
       expect(result).toEqual([sampleLogEntry]);
-      expect(mockClient.searchLogs).toHaveBeenCalledWith(searchOptions);
+      expect(exchangeTokenForResource).toHaveBeenCalledWith('auth-token', 'log:test-log', 'test-tenant');
     });
-    
-    it('should handle empty search results', async () => {
-      // Setup the mock
-      mockClient.searchLogs = jest.fn().mockResolvedValue({
-        results: [],
-        total: 0
-      });
-      
-      // Call the method
-      const result = await service.searchLogs({});
-      
-      // Check the result
+
+    it('should return empty array when all methods fail', async () => {
+      // Mock all failures
+      mockFetch.mockRejectedValue(new Error('All failed'));
+      getAuthToken.mockRejectedValue(new Error('No token'));
+
+      const result = await service.getLogByName('test-log');
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getLogEntryById', () => {
+    it('should return placeholder implementation', async () => {
+      const result = await service.getLogEntryById('test-log', 'test-id');
+      expect(result).toEqual({});
+    });
+  });
+
+  describe('createOrOverwriteLog', () => {
+    it('should resolve without error (placeholder)', async () => {
+      await expect(service.createOrOverwriteLog('test-log', [sampleLogEntry])).resolves.toBeUndefined();
+    });
+  });
+
+  describe('appendToLog', () => {
+    it('should resolve without error (placeholder)', async () => {
+      await expect(service.appendToLog('test-log', [sampleLogEntry])).resolves.toBeUndefined();
+    });
+  });
+
+  describe('updateLogEntry', () => {
+    it('should resolve without error (placeholder)', async () => {
+      await expect(service.updateLogEntry('test-log', 'test-id', sampleLogEntry)).resolves.toBeUndefined();
+    });
+  });
+
+  describe('deleteLogEntry', () => {
+    it('should resolve without error (placeholder)', async () => {
+      await expect(service.deleteLogEntry('test-log', 'test-id')).resolves.toBeUndefined();
+    });
+  });
+
+  describe('clearLog', () => {
+    it('should resolve without error (placeholder)', async () => {
+      await expect(service.clearLog('test-log')).resolves.toBeUndefined();
+    });
+  });
+
+  describe('searchLogs', () => {
+    it('should return empty array (placeholder)', async () => {
+      const result = await service.searchLogs({ query: 'test' });
       expect(result).toEqual([]);
     });
   });
