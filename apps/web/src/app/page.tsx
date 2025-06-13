@@ -12,27 +12,27 @@ export default function Home() {
   // Define features
   const features = [
     {
-      title: 'AI Logging',
-      description: 'Comprehensive logging for all your AI models. Track inputs, outputs, and performance metrics in one place.',
+      title: 'Zero-Knowledge Encryption',
+      description: 'Your data is encrypted before it leaves your environment. We analyze patterns without ever seeing your plaintext data.',
       buttonText: 'Learn More',
       buttonVariant: 'default' as const
     },
     {
-      title: 'Multi-tenant Support',
-      description: 'Securely isolate data between different teams or customers with our robust multi-tenant architecture.',
+      title: 'AI-Powered Insights',
+      description: 'Get intelligent anomaly detection and pattern analysis while maintaining complete data privacy.',
       buttonText: 'Explore',
       buttonVariant: 'outline' as const
     },
     {
-      title: 'Real-time Analytics',
-      description: 'Monitor your AI systems in real-time with powerful dashboards and visualization tools.',
-      buttonText: 'See Demo',
+      title: 'Enterprise Security',
+      description: 'Built for the most security-conscious organizations with SOC 2 ready architecture and compliance features.',
+      buttonText: 'See Security',
       buttonVariant: 'default' as const
     },
     {
-      title: 'API Integration',
-      description: 'Easily integrate with your existing AI systems using our comprehensive API and SDKs.',
-      buttonText: 'View Docs',
+      title: 'Multi-Language SDKs',
+      description: 'Integrate seamlessly with your existing systems using our comprehensive SDKs for all major languages.',
+      buttonText: 'View SDKs',
       buttonVariant: 'outline' as const
     }
   ];
@@ -82,8 +82,8 @@ export default function Home() {
 
       <Container>
         <Hero
-          title="NeuralLog - AI Logging Platform"
-          description="The comprehensive logging and monitoring solution for AI systems. Track, analyze, and improve your AI models with ease."
+          title="NeuralLog - Zero-Knowledge AI Telemetry"
+          description="The world's first zero-knowledge logging platform for AI systems. Get powerful insights while keeping your data completely private and secure."
         />
 
         <FeaturesGrid features={features} />
@@ -91,8 +91,8 @@ export default function Home() {
         <div className="bg-brand-50 dark:bg-gray-700 p-6 rounded-lg mb-8 border border-brand-200 dark:border-gray-600">
           <h2 className="text-2xl font-semibold mb-4 text-center text-brand-600 dark:text-brand-400">Ready to get started?</h2>
           <p className="text-center text-gray-700 dark:text-gray-300 mb-6">
-            Join thousands of developers who are already using NeuralLog to improve their AI systems.
-            Sign up for free and start logging your AI models today.
+            Be among the first to experience zero-knowledge AI logging.
+            Sign up for early access and help shape the future of secure AI telemetry.
           </p>
           <CallToAction buttons={ctaButtons} />
         </div>
