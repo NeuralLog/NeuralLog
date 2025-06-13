@@ -215,4 +215,4 @@ If the purge job is causing performance issues:
 - [Storage Adapters](./storage-adapters.md)
 - [Configuration Guide](./configuration.md)
 - [API Reference](./api.md)
-- [Zero-Knowledge Architecture](../security/zero-knowledge-architecture.md)
+- [Zero-Knowledge Architecture](../../security/zero-knowledge-architecture.md)

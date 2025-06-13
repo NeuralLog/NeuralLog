@@ -46,7 +46,7 @@ const config: Config = {
           routeBasePath: 'docs',
           path: './content',
           include: ['**/*.md', '**/*.mdx'],
-          exclude: ['code-snippets/**'],
+          exclude: [],
           // Include code-snippets directory
           includeCurrentVersion: true,
           remarkPlugins: [],
@@ -130,7 +130,7 @@ const config: Config = {
             },
             {
               label: 'Code Walkthrough',
-              to: '/docs/code-walkthrough',
+              to: '/docs/code-walkthrough-overview',
             },
           ],
         },

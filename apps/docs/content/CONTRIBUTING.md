@@ -6,10 +6,6 @@ sidebar_position: 10
 
 Thank you for your interest in contributing to NeuralLog! This document provides guidelines and instructions for contributing to the project.
 
-## Code of Conduct
-
-Please read and follow our [Code of Conduct](./CODE_OF_CONDUCT.md) to help us maintain a healthy and welcoming community.
-
 ## How to Contribute
 
 There are many ways to contribute to NeuralLog:

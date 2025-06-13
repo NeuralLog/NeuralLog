@@ -160,7 +160,7 @@ Authorization: Bearer <token>
 **Query Parameters**
 
 - `limit` (optional): Maximum number of entries to return (default: 100)
-- `namespace` (optional): Namespace to get logs from (default: "default")
+- `namespace' (optional): Namespace to get logs from (default: "default")
 
 **Response**
 
@@ -408,10 +408,6 @@ Authorization: Bearer <token>
 }
 ```
 
-
-
-
-
 ## Namespace Support
 
 All endpoints support the `namespace` query parameter to specify which namespace to operate on. If not provided, the default namespace is used.
@@ -445,3 +441,45 @@ http://<host>:<port>/api-docs
 ```
 
 This provides an interactive documentation where you can explore and test the API endpoints.
+
+## Statistics
+
+The statistics endpoints provide insights into log usage and system performance.
+
+### Get Log Statistics
+
+Get statistics for a specific log.
+
+**Endpoint:** `GET /api/logs/{logId}/stats`
+
+**Parameters:**
+- `logId` (path parameter): The ID of the log
+
+**Response:**
+```json
+{
+  "logId": "string",
+  "entryCount": 0,
+  "totalSize": 0,
+  "oldestEntry": "2023-06-01T00:00:00Z",
+  "newestEntry": "2023-06-15T23:59:59Z",
+  "averageEntrySize": 0
+}
+```
+
+### Get System Statistics
+
+Get overall system statistics.
+
+**Endpoint:** `GET /api/stats`
+
+**Response:**
+```json
+{
+  "totalLogs": 0,
+  "totalEntries": 0,
+  "totalSize": 0,
+  "activeUsers": 0,
+  "systemHealth": "healthy"
+}
+```

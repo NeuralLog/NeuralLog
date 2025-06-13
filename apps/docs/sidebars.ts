@@ -38,7 +38,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Code Walkthrough',
       items: [
-        'code-walkthrough',
+        'code-walkthrough-overview',
         'code-walkthrough/master-secret-generation',
         'code-walkthrough/kek-version-creation',
         'code-walkthrough/admin-setup',

@@ -31,7 +31,7 @@ The OpenAPI schemas also provide interactive API documentation through Swagger U
 - **Log Server**: `http://<log-server-host>:<port>/api-docs`
 - **Auth Service**: `http://<auth-service-host>:<port>/api-docs`
 
-For more information about the OpenAPI integration, see the [OpenAPI Integration](../development/openapi-integration.md) guide.
+For more information about the OpenAPI integration, see the [OpenAPI Integration](./development/openapi-integration.md) guide.
 
 ## Logs Server API
 

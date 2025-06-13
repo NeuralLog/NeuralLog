@@ -67,7 +67,7 @@ function FeatureSection() {
               <img src="/img/ai-integration-icon.svg" alt="AI Integration" className={styles.featureIcon} />
               <Heading as="h3">AI-Powered Insights</Heading>
               <p>Connect your logs directly to AI agents for intelligent analysis and insights while maintaining zero-knowledge security.</p>
-              <Link to="/docs/components/mcp-client" className={styles.featureLink}>Learn about AI integration →</Link>
+              <Link to="/docs/components/mcp-client/overview" className={styles.featureLink}>Learn about AI integration →</Link>
             </div>
           </div>
           <div className="col col--4">

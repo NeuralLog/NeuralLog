@@ -96,9 +96,6 @@ These routes are restricted to administrators:
 | `/api/invitations/validate` | POST | Validate an invitation |
 | `/api/invitations/[id]/use` | POST | Use an invitation |
 
-
-
-
 ### System API
 
 | Endpoint | Method | Description |
@@ -191,3 +188,67 @@ Access-Control-Allow-Headers: Content-Type, Authorization
 ## Webhooks
 
 The API does not currently support webhooks, but this feature may be added in the future.
+
+## Statistics API
+
+The statistics endpoints provide insights into application usage and performance.
+
+### Get User Statistics
+
+Get statistics for the current user's logs and usage.
+
+**Endpoint:** `GET /api/stats/user`
+
+**Response:**
+```json
+{
+  "totalLogs": 0,
+  "totalEntries": 0,
+  "totalSize": 0,
+  "logsCreatedThisMonth": 0,
+  "entriesCreatedThisMonth": 0
+}
+```
+
+### Get Log Statistics
+
+Get statistics for a specific log.
+
+**Endpoint:** `GET /api/stats/logs/:logId`
+
+**Response:**
+```json
+{
+  "logId": "string",
+  "entryCount": 0,
+  "totalSize": 0,
+  "oldestEntry": "2023-06-01T00:00:00Z",
+  "newestEntry": "2023-06-15T23:59:59Z",
+  "averageEntrySize": 0,
+  "dailyStats": [
+    {
+      "date": "2023-06-15",
+      "entries": 0,
+      "size": 0
+    }
+  ]
+}
+```
+
+### Get System Statistics (Admin Only)
+
+Get overall system statistics. Requires admin privileges.
+
+**Endpoint:** `GET /api/stats/system`
+
+**Response:**
+```json
+{
+  "totalUsers": 0,
+  "totalLogs": 0,
+  "totalEntries": 0,
+  "totalSize": 0,
+  "activeUsersThisMonth": 0,
+  "systemHealth": "healthy"
+}
+```
