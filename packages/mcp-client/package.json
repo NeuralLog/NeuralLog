@@ -8,7 +8,7 @@
     "ai-mcp-logger-client": "./src/index.js"
   },
   "scripts": {
-    "build": "tsc src/index.ts --esModuleInterop --target es2022 --module NodeNext --moduleResolution nodenext",
+    "build": "tsc",
     "start": "node src/index.js",
     "dev": "npx tsx src/index.ts",
     "test": "jest",

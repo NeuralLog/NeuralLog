@@ -1,18 +1,18 @@
 import { Configuration } from '../generated/log-server/configuration';
-import { DefaultApi } from '../generated/log-server/api';
+import { RetentionPolicyApi } from '../generated/log-server/api';
 import { AxiosInstance } from 'axios';
-import { ClientConfig } from '../types/config';
+import { ClientConfig } from '../types/client';
 
 /**
  * Client for managing retention policies
  */
 export class RetentionPolicyClient {
-  private api: DefaultApi;
+  private api: RetentionPolicyApi;
   private tenantId: string;
 
   /**
    * Constructor
-   * 
+   *
    * @param config Client configuration
    * @param axiosInstance Axios instance
    */
@@ -25,7 +25,7 @@ export class RetentionPolicyClient {
       accessToken: config.token,
     });
 
-    this.api = new DefaultApi(apiConfig, axiosInstance);
+    this.api = new RetentionPolicyApi(apiConfig, config.logServerUrl, axiosInstance);
   }
 
   /**

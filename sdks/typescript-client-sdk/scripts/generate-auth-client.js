@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Path to the OpenAPI specification
-const openApiSpecPath = path.resolve(__dirname, '../../auth/src/openapi.yaml');
+const openApiSpecPath = path.resolve(__dirname, '../../../apps/auth/src/openapi.yaml');
 
 // Output directory for the generated client
 const outputDir = path.resolve(__dirname, '../src/generated/auth-service');

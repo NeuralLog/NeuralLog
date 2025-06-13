@@ -30,6 +30,7 @@ import { LoggerService } from '../utils/LoggerService';
 export class NeuralLogClient {
   private logger = LoggerService.getInstance(process.env.NODE_ENV === 'test');
   private configService: ConfigurationService;
+  private cryptoService: CryptoService;
   private authClient: AuthClient;
   private logClient: LogClient;
   private userClient: UserClient;
@@ -56,7 +57,7 @@ export class NeuralLogClient {
     });
 
     // Create services with initial URLs (will be updated during initialization)
-    const cryptoService = new CryptoService();
+    this.cryptoService = new CryptoService();
     const authService = new AuthService(
       this.configService.getAuthUrlSync() || 'http://localhost:3040',
       apiClient
@@ -76,10 +77,10 @@ export class NeuralLogClient {
     const tenantId = this.configService.getTenantId();
 
     // Create managers
-    const keyHierarchyManager = new KeyHierarchyManager(cryptoService, kekService);
-    const authManager = new AuthManager(authService, cryptoService, keyHierarchyManager);
-    const logManager = new LogManager(cryptoService, logsService, authService, authManager, tenantId);
-    const userManager = new UserManager(cryptoService, authService, authManager);
+    const keyHierarchyManager = new KeyHierarchyManager(this.cryptoService, kekService);
+    const authManager = new AuthManager(authService, this.cryptoService, keyHierarchyManager);
+    const logManager = new LogManager(this.cryptoService, logsService, authService, authManager, tenantId);
+    const userManager = new UserManager(this.cryptoService, authService, authManager);
 
     // Create auth provider
     const authProvider = new AuthProvider(authManager);
@@ -653,6 +654,15 @@ export class NeuralLogClient {
    */
   public getAuthToken(): string | null {
     return this.authClient.getAuthToken();
+  }
+
+  /**
+   * Get the crypto service
+   *
+   * @returns CryptoService instance
+   */
+  public getCryptoService(): CryptoService {
+    return this.cryptoService;
   }
 
   /**

@@ -104,15 +104,14 @@ export class CryptoService {
    * Encrypt log data with the current operational KEK
    *
    * @param data Log data
+   * @param kek Optional KEK to use (defaults to current operational KEK)
    * @returns Promise that resolves to the encrypted log data with version information
    */
-  public async encryptLogData(data: any): Promise<Record<string, any>> {
+  public async encryptLogData(data: any, kek?: Uint8Array): Promise<Record<string, any>> {
     try {
-      // Get the current KEK version
+      // Use provided KEK or derive the log key from current operational KEK
+      const logKey = kek ? kek : await this.deriveLogKey();
       const kekVersion = this.getCurrentKEKVersion();
-
-      // Derive the log key
-      const logKey = await this.deriveLogKey();
 
       // Encrypt data using AesEncryptionUtils
       const encryptedData = AesUtils.encrypt(logKey, data);
@@ -131,14 +130,15 @@ export class CryptoService {
    * Decrypt log data using the appropriate KEK version
    *
    * @param encryptedData Encrypted log data with version information
+   * @param kek Optional KEK to use for decryption
    * @returns Promise that resolves to the decrypted log data
    */
-  public async decryptLogData(encryptedData: Record<string, any> | string): Promise<any> {
+  public async decryptLogData(encryptedData: Record<string, any> | string, kek?: Uint8Array): Promise<any> {
     try {
       // If encryptedData is a string or doesn't have the required properties, handle it in AesUtils.decryptWithMetadata
       if (typeof encryptedData !== 'object' || !encryptedData || !encryptedData.kekVersion) {
-        // If no KEK version, use the current one
-        const logKey = await this.deriveLogKey();
+        // Use provided KEK or derive the log key from current operational KEK
+        const logKey = kek ? kek : await this.deriveLogKey();
         return AesUtils.decryptWithMetadata(logKey, encryptedData);
       }
 
@@ -188,18 +188,19 @@ export class CryptoService {
    * Encrypt log name with the current operational KEK
    *
    * @param logName Log name
+   * @param kekVersion Optional KEK version (defaults to current version)
    * @returns Promise that resolves to the encrypted log name with version information
    */
-  public async encryptLogName(logName: string): Promise<string> {
+  public async encryptLogName(logName: string, kekVersion?: string): Promise<string> {
     try {
-      // Get the current KEK version
-      const kekVersion = this.getCurrentKEKVersion();
+      // Get the KEK version (use provided or current)
+      const version = kekVersion || this.getCurrentKEKVersion();
 
       // Derive the log name key
       const logNameKey = await this.deriveLogNameKey();
 
       // Encrypt log name using AesUtils
-      return AesUtils.encryptWithVersion(logNameKey, logName, kekVersion);
+      return AesUtils.encryptWithVersion(logNameKey, logName, version);
     } catch (error) {
       return this.handleError(error, 'encrypt log name', 'encrypt_log_name_failed');
     }
@@ -209,9 +210,10 @@ export class CryptoService {
    * Decrypt log name using the appropriate KEK version
    *
    * @param encryptedLogName Encrypted log name with version information
+   * @param tenantId Optional tenant ID (for compatibility, not used in current implementation)
    * @returns Promise that resolves to the decrypted log name
    */
-  public async decryptLogName(encryptedLogName: string): Promise<string> {
+  public async decryptLogName(encryptedLogName: string, tenantId?: string): Promise<string> {
     try {
       // Convert Base64URL to ArrayBuffer
       const combined = Base64Utils.base64UrlToArrayBuffer(encryptedLogName);

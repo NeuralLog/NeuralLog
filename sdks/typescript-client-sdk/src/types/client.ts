@@ -6,17 +6,27 @@ export interface ClientConfig {
    * API URL
    */
   apiUrl: string;
-  
+
   /**
    * Auth URL
    */
   authUrl: string;
-  
+
+  /**
+   * Log Server URL
+   */
+  logServerUrl: string;
+
   /**
    * API key
    */
   apiKey?: string;
-  
+
+  /**
+   * Authentication token
+   */
+  token?: string;
+
   /**
    * Tenant ID
    */

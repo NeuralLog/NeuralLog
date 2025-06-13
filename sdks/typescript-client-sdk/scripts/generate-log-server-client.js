@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Path to the OpenAPI specification
-const openApiSpecPath = path.resolve(__dirname, '../../log-server/src/openapi.yaml');
+const openApiSpecPath = path.resolve(__dirname, '../../../apps/log-server/src/openapi.yaml');
 
 // Output directory for the generated client
 const outputDir = path.resolve(__dirname, '../src/generated/log-server');

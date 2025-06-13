@@ -1,7 +1,8 @@
 import { AxiosInstance } from 'axios';
 import { ConfigurationService } from './services/ConfigurationService';
 import { AuthProvider } from './services/AuthProvider';
-import { RetentionPolicy, RetentionPolicyApi, Configuration, RetentionPolicyRequest } from '../generated/log-server/api';
+import { RetentionPolicy, RetentionPolicyApi, RetentionPolicyRequest } from '../generated/log-server/api';
+import { Configuration } from '../generated/log-server/configuration';
 import { LogError } from '../errors';
 
 /**

@@ -22,6 +22,15 @@ export class AuthProvider {
   }
 
   /**
+   * Get the authentication token (alias for getAuthToken)
+   *
+   * @returns Authentication token or null if not authenticated
+   */
+  getToken(): string | null {
+    return this.getAuthToken();
+  }
+
+  /**
    * Check if the user is authenticated
    *
    * @returns True if authenticated

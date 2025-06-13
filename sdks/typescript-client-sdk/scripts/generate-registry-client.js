@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Paths
-const openApiPath = path.resolve(__dirname, '../../registry/src/openapi.yaml');
+const openApiPath = path.resolve(__dirname, '../../../packages/registry/src/openapi.yaml');
 const outputDir = path.resolve(__dirname, '../src/registry/openapi');
 
 // Create output directory if it doesn't exist
