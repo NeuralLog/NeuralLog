@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   FiHome, FiKey, FiSettings, FiLogOut, FiMoon, FiSun, FiMenu, FiList, FiUserPlus,
-  FiCpu, FiShield, FiBarChart3, FiEye, FiZap, FiLock, FiActivity, FiTrendingUp,
+  FiCpu, FiShield, FiBarChart, FiEye, FiZap, FiLock, FiActivity, FiTrendingUp,
   FiSearch, FiDatabase, FiUsers, FiServer, FiCheckCircle, FiAlertTriangle
 } from 'react-icons/fi';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -170,7 +170,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
               {/* Analytics & Monitoring */}
               <SidebarSection title="Analytics">
-                <SidebarItem icon={FiBarChart3} href="/analytics" isActive={pathname.startsWith('/analytics')}>
+                <SidebarItem icon={FiBarChart} href="/analytics" isActive={pathname.startsWith('/analytics')}>
                   Analytics
                 </SidebarItem>
                 <SidebarItem icon={FiEye} href="/monitoring" isActive={pathname.startsWith('/monitoring')}>
@@ -294,7 +294,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
                   {/* Analytics & Monitoring */}
                   <SidebarSection title="Analytics">
-                    <SidebarItem icon={FiBarChart3} href="/analytics" isActive={pathname.startsWith('/analytics')}>
+                    <SidebarItem icon={FiBarChart} href="/analytics" isActive={pathname.startsWith('/analytics')}>
                       Analytics
                     </SidebarItem>
                     <SidebarItem icon={FiEye} href="/monitoring" isActive={pathname.startsWith('/monitoring')}>

@@ -2,7 +2,22 @@ import { LogsService } from '../logsService';
 import { LogsApiClient } from '@/sdk/logs/api-client';
 
 // Mock the LogsApiClient
-jest.mock('@/sdk/logs/api-client');
+jest.mock('@/sdk/logs/api-client', () => {
+  return {
+    LogsApiClient: jest.fn().mockImplementation(() => ({
+      setTenantId: jest.fn(),
+      getLogs: jest.fn(),
+      getLogByName: jest.fn(),
+      getLogEntryById: jest.fn(),
+      overwriteLog: jest.fn(),
+      appendToLog: jest.fn(),
+      updateLogEntryById: jest.fn(),
+      deleteLogEntryById: jest.fn(),
+      clearLog: jest.fn(),
+      searchLogs: jest.fn(),
+    }))
+  };
+});
 
 describe('LogsService', () => {
   // Test service instance
@@ -22,19 +37,12 @@ describe('LogsService', () => {
   beforeEach(() => {
     // Clear all mocks
     jest.clearAllMocks();
-    
-    // Create a mock client instance
-    mockClient = new LogsApiClient({
-      apiUrl: 'http://localhost:3030',
-      apiKey: 'test-api-key',
-      tenantId: 'test-tenant'
-    }) as jest.Mocked<LogsApiClient>;
-    
-    // Replace the constructor with a mock that returns our mock client
-    (LogsApiClient as jest.Mock).mockImplementation(() => mockClient);
-    
+
     // Create a new service instance
     service = new LogsService('test-tenant', 'test-api-key', 'http://localhost:3030');
+
+    // Get the mock client instance
+    mockClient = (service as any).client as jest.Mocked<LogsApiClient>;
   });
   
   describe('constructor', () => {

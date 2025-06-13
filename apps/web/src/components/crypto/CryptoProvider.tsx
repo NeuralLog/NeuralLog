@@ -7,7 +7,7 @@ interface CryptoContextType {
   keyHierarchy: KeyHierarchy | null;
   tenantId: string;
   isInitialized: boolean;
-  initializeKeyHierarchy: (masterSecret?: string, tenantId?: string) => void;
+  initializeKeyHierarchy: (masterSecret?: string, tenantId?: string) => Promise<void>;
   encryptData: (data: any, logName: string) => Promise<any>;
   decryptData: (encryptedData: any, logName: string) => Promise<any>;
 }
@@ -16,7 +16,7 @@ const CryptoContext = createContext<CryptoContextType>({
   keyHierarchy: null,
   tenantId: 'default',
   isInitialized: false,
-  initializeKeyHierarchy: () => {},
+  initializeKeyHierarchy: async () => {},
   encryptData: async () => ({}),
   decryptData: async () => ({}),
 });
@@ -34,18 +34,26 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
 
   // Initialize from localStorage if available
   useEffect(() => {
-    const storedMasterSecret = localStorage.getItem('neurallog_master_secret');
-    const storedTenantId = localStorage.getItem('neurallog_tenant_id');
-    
-    if (storedMasterSecret) {
-      initializeKeyHierarchy(storedMasterSecret, storedTenantId || 'default');
-    }
+    const initFromStorage = async () => {
+      const storedMasterSecret = localStorage.getItem('neurallog_master_secret');
+      const storedTenantId = localStorage.getItem('neurallog_tenant_id');
+
+      if (storedMasterSecret) {
+        await initializeKeyHierarchy(storedMasterSecret, storedTenantId || 'default');
+      }
+    };
+
+    initFromStorage();
   }, []);
 
-  const initializeKeyHierarchy = (masterSecret?: string, newTenantId?: string) => {
+  const initializeKeyHierarchy = async (masterSecret?: string, newTenantId?: string) => {
     try {
       // Generate a random master secret if not provided
-      const secret = masterSecret || arrayBufferToBase64(generateEncryptionKey());
+      let secret = masterSecret;
+      if (!secret) {
+        const keyBuffer = await generateEncryptionKey();
+        secret = arrayBufferToBase64(keyBuffer);
+      }
       const tenant = newTenantId || tenantId;
       
       // Create a new key hierarchy

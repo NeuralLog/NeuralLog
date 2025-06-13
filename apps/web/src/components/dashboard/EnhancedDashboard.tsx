@@ -92,7 +92,7 @@ const quickActions: QuickAction[] = [
   {
     title: 'Analytics',
     description: 'View comprehensive analytics and custom metrics',
-    icon: FiBarChart3,
+    icon: FiBarChart,
     href: '/analytics',
     color: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
   }

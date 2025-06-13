@@ -7,8 +7,9 @@ import {
 } from '../apiKeyService';
 
 // Mock the AuthApiKeyStorage
+let mockApiKeys: ApiKey[] = [];
+
 jest.mock('../authApiKeyStorage', () => {
-  const mockApiKeys: ApiKey[] = [];
   return {
     AuthApiKeyStorage: jest.fn().mockImplementation(() => ({
       getApiKeys: jest.fn().mockImplementation(() => Promise.resolve([...mockApiKeys])),
@@ -38,6 +39,8 @@ jest.mock('../authApiKeyStorage', () => {
 
 describe('API Key Service', () => {
   beforeEach(() => {
+    // Clear the mock API keys array
+    mockApiKeys.length = 0;
     // Clear any in-memory cache
     clearApiKeys();
     // Reset mocks
