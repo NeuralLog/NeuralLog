@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- server/deployment.yaml
+- server/service.yaml
+- redis/statefulset.yaml
+- redis/service.yaml
+- redis/configmap.yaml
+- auth/deployment.yaml
+- auth/service.yaml
+- openfga/deployment.yaml
+- openfga/service.yaml
+- openfga/postgres-deployment.yaml
+- openfga/postgres-service.yaml
+- openfga/postgres-pvc.yaml
+- openfga/postgres-secret.yaml
+
+namespace: neurallog

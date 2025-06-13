@@ -1,4 +1,198 @@
-# NeuralLog
+# NeuralLog - Zero-Knowledge Telemetry and Logging Platform
+
+Welcome to the NeuralLog monorepo! This repository contains all components of the NeuralLog ecosystem in a single, well-organized workspace powered by Turborepo.
+
+## 🏗️ Repository Structure
+
+```
+neurallog/
+├── apps/                    # Applications
+│   ├── auth/                # Authentication service
+│   ├── docs/                # Documentation site
+│   ├── log-server/          # Main logging server
+│   ├── marketing/           # Marketing website
+│   └── web/                 # Web dashboard
+├── packages/                # Shared packages
+│   ├── mcp-client/          # Model Context Protocol client
+│   ├── registry/            # Component registry
+│   └── specs/               # Technical specifications
+├── sdks/                    # Client SDKs
+│   ├── csharp/              # C# SDK
+│   ├── go/                  # Go SDK
+│   ├── java-client-sdk/     # Java SDK
+│   ├── python/              # Python SDK
+│   ├── typescript-client-sdk/ # TypeScript SDK
+│   └── typescript-logger/   # TypeScript logger
+├── services/                # Microservices
+│   └── java-logger/         # Java logging service
+└── infra/                   # Infrastructure as code
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js >= 18.0.0
+- npm >= 8.0.0
+
+### Installation
+```bash
+npm install
+```
+
+### Development
+```bash
+# Start all apps in development mode
+npm run dev
+
+# Build all packages
+npm run build
+
+# Run tests across all packages
+npm run test
+
+# Lint all code
+npm run lint
+```
+
+## 📦 Workspace Commands
+
+Thanks to Turborepo, you can run commands across the entire workspace efficiently:
+
+```bash
+# Build everything (with intelligent caching)
+npm run build
+
+# Run development servers for all apps
+npm run dev
+
+# Test everything
+npm run test
+
+# Lint everything
+npm run lint
+
+# Clean all build artifacts
+npm run clean
+
+# Type check everything
+npm run type-check
+
+# Format code
+npm run format
+```
+
+## 🎯 Working with Specific Packages
+
+You can also run commands for specific packages:
+
+```bash
+# Build just the log-server
+npm run build --workspace=apps/log-server
+
+# Start development for just the web app
+npm run dev --workspace=apps/web
+
+# Test just the Python SDK
+npm run test --workspace=sdks/python
+```
+
+## 🏭 Applications
+
+### Log Server (`apps/log-server`)
+The core NeuralLog server that handles log ingestion, processing, and storage.
+
+### Web Dashboard (`apps/web`)
+The main web interface for viewing and managing logs.
+
+### Authentication Service (`apps/auth`)
+Handles authentication and authorization for the NeuralLog platform.
+
+### Documentation (`apps/docs`)
+The official documentation site for NeuralLog.
+
+### Marketing Site (`apps/marketing`)
+The public marketing website for NeuralLog.
+
+## 📚 Client SDKs
+
+We provide SDKs for multiple programming languages:
+
+- **C#** (`sdks/csharp`) - For .NET applications
+- **Go** (`sdks/go`) - For Go applications  
+- **Java** (`sdks/java-client-sdk`) - For Java applications
+- **Python** (`sdks/python`) - For Python applications
+- **TypeScript** (`sdks/typescript-client-sdk`) - For TypeScript/JavaScript applications
+- **TypeScript Logger** (`sdks/typescript-logger`) - Lightweight logging library
+
+## 🔧 Shared Packages
+
+### Specifications (`packages/specs`)
+Technical specifications and schemas for the NeuralLog platform.
+
+### Registry (`packages/registry`)
+Component registry for managing NeuralLog components and plugins.
+
+### MCP Client (`packages/mcp-client`)
+Model Context Protocol client for AI integration with Claude.
+
+## 🌩️ Infrastructure
+
+### Infrastructure as Code (`infra/`)
+Contains all infrastructure configuration files, Docker configurations, and deployment scripts.
+
+## 🛠️ Development
+
+### Adding a New Package
+
+1. Create a new directory in the appropriate workspace (`apps/`, `packages/`, `sdks/`, or `services/`)
+2. Add a `package.json` with the appropriate workspace configuration
+3. Run `npm install` to update the workspace
+
+### Build System
+
+This monorepo uses Turborepo for:
+- **Intelligent caching** - Only rebuild what's changed
+- **Parallel execution** - Run tasks across packages simultaneously  
+- **Dependency awareness** - Build packages in the correct order
+- **Remote caching** - Share build cache across team members
+
+### Git Workflow
+
+With the monorepo, you can now:
+- Make atomic commits across multiple packages
+- Coordinate changes between client SDKs and server
+- Maintain consistency across the entire platform
+- Simplify release management
+
+## 📖 Documentation
+
+- [Technical Specifications](./packages/specs/)
+- [API Documentation](./apps/docs/)
+- [SDK Documentation](./sdks/)
+- [Infrastructure Guide](./infra/)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `npm run test`
+5. Run linting: `npm run lint`
+6. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔗 Links
+
+- [Official Website](https://neurallog.com)
+- [Documentation](https://docs.neurallog.com)
+- [GitHub Issues](https://github.com/NeuralLog/neurallog/issues)
+
+---
+
+**🎉 Welcome to the NeuralLog monorepo! No more managing 16 separate repositories!** 🎉
 
 > Zero-Knowledge Telemetry and Logging Platform
 
