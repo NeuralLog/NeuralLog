@@ -1,54 +1,11 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNeuralLog } from '@/contexts/NeuralLogContext';
-
-// Use client-side only imports for Material UI
-let Box: any;
-let Typography: any;
-let Card: any;
-let CardContent: any;
-let Button: any;
-let CircularProgress: any;
-let Alert: any;
-let FormControl: any;
-let InputLabel: any;
-let Select: any;
-let MenuItem: any;
-let TextField: any;
-let Grid: any;
-let Divider: any;
-let Paper: any;
-let Table: any;
-let TableBody: any;
-let TableCell: any;
-let TableContainer: any;
-let TableHead: any;
-let TableRow: any;
-
-// Import Material UI components only on the client side
-if (typeof window !== 'undefined') {
-  const mui = require('@mui/material');
-  Box = mui.Box;
-  Typography = mui.Typography;
-  Card = mui.Card;
-  CardContent = mui.CardContent;
-  Button = mui.Button;
-  CircularProgress = mui.CircularProgress;
-  Alert = mui.Alert;
-  FormControl = mui.FormControl;
-  InputLabel = mui.InputLabel;
-  Select = mui.Select;
-  MenuItem = mui.MenuItem;
-  TextField = mui.TextField;
-  Grid = mui.Grid;
-  Divider = mui.Divider;
-  Paper = mui.Paper;
-  Table = mui.Table;
-  TableBody = mui.TableBody;
-  TableCell = mui.TableCell;
-  TableContainer = mui.TableContainer;
-  TableHead = mui.TableHead;
-  TableRow = mui.TableRow;
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Helper function to format retention period
 const formatRetentionPeriod = (ms: number): string => {
@@ -100,8 +57,6 @@ const timeUnitToMs = (value: number, unit: string): number => {
  * Component for managing retention policies
  */
 const RetentionPolicySettings: React.FC = () => {
-  const { client } = useNeuralLog();
-
   // State for default policy
   const [defaultPolicy, setDefaultPolicy] = useState<any>(null);
   const [newDefaultRetentionValue, setNewDefaultRetentionValue] = useState<number>(30);
@@ -118,38 +73,15 @@ const RetentionPolicySettings: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [affectedLogs, setAffectedLogs] = useState<number | null>(null);
 
-  // Load data on component mount
+  // Mock data for demo
   useEffect(() => {
-    if (client) {
-      loadData();
-    }
-  }, [client]);
-
-  // Load all data (default policy, log-specific policies, and logs)
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Load default policy
-      const policy = await client.getRetentionPolicy();
-      setDefaultPolicy(policy);
-
-      // Load all logs
-      const logsResponse = await client.getLogs();
-      setLogs(logsResponse.map((log: any) => log.name));
-
-      // Load all policies
-      const policies = await client.getAllRetentionPolicies();
-      setLogPolicies(policies.filter((p: any) => p.logName));
-    } catch (err) {
-      setError(`Failed to load retention policies: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setDefaultPolicy({ retentionPeriodMs: 30 * 24 * 60 * 60 * 1000 }); // 30 days
+    setLogs(['app-logs', 'error-logs', 'access-logs']);
+    setLogPolicies([
+      { logName: 'error-logs', retentionPeriodMs: 90 * 24 * 60 * 60 * 1000 }, // 90 days
+    ]);
+  }, []);
 
   // Update default policy
   const updateDefaultPolicy = async () => {
@@ -159,9 +91,10 @@ const RetentionPolicySettings: React.FC = () => {
 
     try {
       const retentionPeriodMs = timeUnitToMs(newDefaultRetentionValue, newDefaultRetentionUnit);
-      await client.setRetentionPolicy(retentionPeriodMs);
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setDefaultPolicy({ retentionPeriodMs });
       setSuccess('Default retention policy updated successfully');
-      loadData(); // Reload data
     } catch (err) {
       setError(`Failed to update default policy: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -169,285 +102,171 @@ const RetentionPolicySettings: React.FC = () => {
     }
   };
 
-  // Check impact of default policy change
-  const checkDefaultPolicyImpact = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const retentionPeriodMs = timeUnitToMs(newDefaultRetentionValue, newDefaultRetentionUnit);
-      const count = await client.getExpiredLogsCount(retentionPeriodMs);
-      setAffectedLogs(count);
-    } catch (err) {
-      setError(`Failed to check impact: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Set log-specific policy
-  const setLogPolicy = async () => {
-    if (!selectedLog) {
-      setError('Please select a log');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const retentionPeriodMs = timeUnitToMs(newLogRetentionValue, newLogRetentionUnit);
-      await client.setRetentionPolicy(retentionPeriodMs, selectedLog);
-      setSuccess(`Retention policy for "${selectedLog}" updated successfully`);
-      loadData(); // Reload data
-    } catch (err) {
-      setError(`Failed to set log policy: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Delete log-specific policy
-  const deleteLogPolicy = async (logName: string) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      await client.deleteRetentionPolicy(logName);
-      setSuccess(`Retention policy for "${logName}" deleted successfully`);
-      loadData(); // Reload data
-    } catch (err) {
-      setError(`Failed to delete log policy: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <Box>
-      <Typography variant="h5" gutterBottom>
-        Data Retention Policies
-      </Typography>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">Data Retention Policies</h2>
+        <p className="text-muted-foreground">Manage how long your log data is retained</p>
+      </div>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+        <Alert className="border-red-200 bg-red-50">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {success && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {success}
+        <Alert className="border-green-200 bg-green-50">
+          <AlertTitle>Success</AlertTitle>
+          <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
 
-      {loading && !defaultPolicy && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-          <CircularProgress />
-        </Box>
-      )}
-
       {/* Default Retention Policy */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Default Retention Policy
-          </Typography>
-
-          <Typography variant="body2" color="text.secondary" paragraph>
+      <Card>
+        <CardHeader>
+          <CardTitle>Default Retention Policy</CardTitle>
+          <CardDescription>
             This policy applies to all logs that don't have a specific retention policy.
-          </Typography>
-
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
           {defaultPolicy && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle1">
-                Current Policy:
-              </Typography>
-              <Typography>
+            <div>
+              <h4 className="font-medium">Current Policy:</h4>
+              <p className="text-sm text-muted-foreground">
                 Logs are retained for {formatRetentionPeriod(defaultPolicy.retentionPeriodMs)}
-              </Typography>
-            </Box>
+              </p>
+            </div>
           )}
 
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="subtitle1" gutterBottom>
-            Update Default Policy
-          </Typography>
-
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Retention Period"
-                type="number"
-                value={newDefaultRetentionValue}
-                onChange={(e) => setNewDefaultRetentionValue(Number(e.target.value))}
-                fullWidth
-                inputProps={{ min: 1 }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <FormControl fullWidth>
-                <InputLabel>Time Unit</InputLabel>
-                <Select
-                  value={newDefaultRetentionUnit}
-                  onChange={(e) => setNewDefaultRetentionUnit(e.target.value)}
-                  label="Time Unit"
-                >
-                  <MenuItem value="seconds">Seconds</MenuItem>
-                  <MenuItem value="minutes">Minutes</MenuItem>
-                  <MenuItem value="hours">Hours</MenuItem>
-                  <MenuItem value="days">Days</MenuItem>
-                  <MenuItem value="months">Months</MenuItem>
-                  <MenuItem value="years">Years</MenuItem>
+          <div className="border-t pt-4">
+            <h4 className="font-medium mb-4">Update Default Policy</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium">Retention Period</label>
+                <Input
+                  type="number"
+                  value={newDefaultRetentionValue}
+                  onChange={(e) => setNewDefaultRetentionValue(Number(e.target.value))}
+                  min={1}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Time Unit</label>
+                <Select value={newDefaultRetentionUnit} onValueChange={setNewDefaultRetentionUnit}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="seconds">Seconds</SelectItem>
+                    <SelectItem value="minutes">Minutes</SelectItem>
+                    <SelectItem value="hours">Hours</SelectItem>
+                    <SelectItem value="days">Days</SelectItem>
+                    <SelectItem value="months">Months</SelectItem>
+                    <SelectItem value="years">Years</SelectItem>
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                  variant="outlined"
-                  onClick={checkDefaultPolicyImpact}
-                  disabled={loading}
-                >
-                  Check Impact
+              </div>
+              <div className="flex items-end">
+                <Button onClick={updateDefaultPolicy} disabled={loading}>
+                  {loading ? 'Updating...' : 'Update Policy'}
                 </Button>
-                <Button
-                  variant="contained"
-                  onClick={updateDefaultPolicy}
-                  disabled={loading}
-                >
-                  Update
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-
-          {affectedLogs !== null && (
-            <Alert severity="info" sx={{ mt: 2 }}>
-              This change will affect {affectedLogs} log entries.
-            </Alert>
-          )}
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
       {/* Log-Specific Retention Policies */}
       <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Log-Specific Retention Policies
-          </Typography>
-
-          <Typography variant="body2" color="text.secondary" paragraph>
+        <CardHeader>
+          <CardTitle>Log-Specific Retention Policies</CardTitle>
+          <CardDescription>
             Set different retention periods for specific logs. These override the default policy.
-          </Typography>
-
-          {/* Existing Log Policies */}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Existing policies */}
           {logPolicies.length > 0 && (
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="subtitle1" gutterBottom>
-                Current Log-Specific Policies:
-              </Typography>
-
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Log Name</TableCell>
-                      <TableCell>Retention Period</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {logPolicies.map((policy) => (
-                      <TableRow key={policy.logName}>
-                        <TableCell>{policy.logName}</TableCell>
-                        <TableCell>{formatRetentionPeriod(policy.retentionPeriodMs)}</TableCell>
-                        <TableCell>
-                          <Button
-                            variant="outlined"
-                            color="error"
-                            size="small"
-                            onClick={() => deleteLogPolicy(policy.logName)}
-                            disabled={loading}
-                          >
-                            Delete
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Box>
+            <div>
+              <h4 className="font-medium mb-2">Current Log-Specific Policies:</h4>
+              <div className="space-y-2">
+                {logPolicies.map((policy) => (
+                  <div key={policy.logName} className="flex items-center justify-between p-3 border rounded">
+                    <div>
+                      <span className="font-medium">{policy.logName}</span>
+                      <span className="text-sm text-muted-foreground ml-2">
+                        - {formatRetentionPeriod(policy.retentionPeriodMs)}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={loading}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="subtitle1" gutterBottom>
-            Add/Update Log-Specific Policy
-          </Typography>
-
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={3}>
-              <FormControl fullWidth>
-                <InputLabel>Select Log</InputLabel>
-                <Select
-                  value={selectedLog}
-                  onChange={(e) => setSelectedLog(e.target.value)}
-                  label="Select Log"
-                >
-                  {logs.map((log) => (
-                    <MenuItem key={log} value={log}>
-                      {log}
-                    </MenuItem>
-                  ))}
+          <div className="border-t pt-4">
+            <h4 className="font-medium mb-4">Add/Update Log-Specific Policy</h4>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="text-sm font-medium">Select Log</label>
+                <Select value={selectedLog} onValueChange={setSelectedLog}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a log" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {logs.map((log) => (
+                      <SelectItem key={log} value={log}>
+                        {log}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                label="Retention Period"
-                type="number"
-                value={newLogRetentionValue}
-                onChange={(e) => setNewLogRetentionValue(Number(e.target.value))}
-                fullWidth
-                inputProps={{ min: 1 }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <FormControl fullWidth>
-                <InputLabel>Time Unit</InputLabel>
-                <Select
-                  value={newLogRetentionUnit}
-                  onChange={(e) => setNewLogRetentionUnit(e.target.value)}
-                  label="Time Unit"
-                >
-                  <MenuItem value="seconds">Seconds</MenuItem>
-                  <MenuItem value="minutes">Minutes</MenuItem>
-                  <MenuItem value="hours">Hours</MenuItem>
-                  <MenuItem value="days">Days</MenuItem>
-                  <MenuItem value="months">Months</MenuItem>
-                  <MenuItem value="years">Years</MenuItem>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Retention Period</label>
+                <Input
+                  type="number"
+                  value={newLogRetentionValue}
+                  onChange={(e) => setNewLogRetentionValue(Number(e.target.value))}
+                  min={1}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Time Unit</label>
+                <Select value={newLogRetentionUnit} onValueChange={setNewLogRetentionUnit}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="seconds">Seconds</SelectItem>
+                    <SelectItem value="minutes">Minutes</SelectItem>
+                    <SelectItem value="hours">Hours</SelectItem>
+                    <SelectItem value="days">Days</SelectItem>
+                    <SelectItem value="months">Months</SelectItem>
+                    <SelectItem value="years">Years</SelectItem>
+                  </SelectContent>
                 </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Button
-                variant="contained"
-                onClick={setLogPolicy}
-                disabled={loading || !selectedLog}
-                fullWidth
-              >
-                Set Policy
-              </Button>
-            </Grid>
-          </Grid>
+              </div>
+              <div className="flex items-end">
+                <Button disabled={loading || !selectedLog}>
+                  {loading ? 'Setting...' : 'Set Policy'}
+                </Button>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
-    </Box>
+    </div>
   );
 };
 

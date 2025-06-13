@@ -4,7 +4,7 @@
  * This utility provides a singleton instance of the NeuralLogClient for use throughout the web application.
  */
 
-import { NeuralLogClient } from '@neurallog/client-sdk';
+import { NeuralLogClient } from '@/lib/mocks/neurallog-sdk';
 
 // Configuration
 const config = {

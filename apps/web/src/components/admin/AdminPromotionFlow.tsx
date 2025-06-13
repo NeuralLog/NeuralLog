@@ -39,7 +39,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useConfig } from '../../hooks/useConfig';
 import axios from 'axios';
-import { SerializedSecretShare } from '@neurallog/typescript-client-sdk';
+import { SerializedSecretShare } from '@/lib/mocks/neurallog-sdk';
 import { SecureShareService } from '../../services/SecureShareService';
 
 interface User {

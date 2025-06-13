@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { NeuralLogClient } from '@neurallog/client-sdk';
+import { NeuralLogClient } from '@/lib/mocks/neurallog-sdk';
 
 /**
  * POST /api/auth/change-password

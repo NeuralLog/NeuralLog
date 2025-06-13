@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { 
   FiCpu, FiShield, FiZap, FiTrendingUp, FiAlertTriangle, FiCheckCircle,
-  FiActivity, FiEye, FiBarChart3, FiLock, FiUsers, FiServer, FiArrowRight
+  FiActivity, FiEye, FiBarChart, FiLock, FiUsers, FiServer, FiArrowRight
 } from 'react-icons/fi';
 
 interface QuickStat {

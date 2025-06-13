@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FiBarChart3, FiTrendingUp, FiActivity, FiRefreshCw, FiDownload } from 'react-icons/fi';
+import { FiBarChart, FiTrendingUp, FiActivity, FiRefreshCw, FiDownload } from 'react-icons/fi';
 
 export default function AnalyticsPage() {
   return (
@@ -29,7 +29,7 @@ export default function AnalyticsPage() {
         {[
           { name: 'Total Log Entries', value: '2.4M', change: 12.5, icon: FiActivity },
           { name: 'Error Rate', value: '0.8%', change: -15.2, icon: FiTrendingUp },
-          { name: 'API Response Time', value: '145ms', change: -8.1, icon: FiBarChart3 },
+          { name: 'API Response Time', value: '145ms', change: -8.1, icon: FiBarChart },
           { name: 'Active Users', value: '1,247', change: 23.4, icon: FiActivity }
         ].map((metric, index) => (
           <div key={index} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">

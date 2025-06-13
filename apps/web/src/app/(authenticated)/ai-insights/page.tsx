@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { 
   FiZap, FiTrendingUp, FiAlertTriangle, FiCheckCircle, FiClock, 
-  FiBarChart3, FiEye, FiTarget, FiRefreshCw, FiDownload, FiFilter 
+  FiBarChart, FiEye, FiTarget, FiRefreshCw, FiDownload, FiFilter
 } from 'react-icons/fi';
 
 interface Insight {
@@ -107,7 +107,7 @@ export default function AIInsightsPage() {
           { label: 'Total Insights', value: insights.length.toString(), icon: FiZap, color: 'text-blue-600' },
           { label: 'Critical Issues', value: insights.filter(i => i.severity === 'critical').length.toString(), icon: FiAlertTriangle, color: 'text-red-600' },
           { label: 'Actionable Items', value: insights.filter(i => i.actionable).length.toString(), icon: FiTarget, color: 'text-green-600' },
-          { label: 'Avg Confidence', value: `${Math.round(insights.reduce((acc, i) => acc + i.confidence, 0) / insights.length)}%`, icon: FiBarChart3, color: 'text-purple-600' }
+          { label: 'Avg Confidence', value: `${Math.round(insights.reduce((acc, i) => acc + i.confidence, 0) / insights.length)}%`, icon: FiBarChart, color: 'text-purple-600' }
         ].map((stat, index) => (
           <div key={index} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
             <div className="flex items-center">

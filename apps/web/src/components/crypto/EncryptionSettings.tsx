@@ -48,7 +48,7 @@ export const EncryptionSettings: React.FC<EncryptionSettingsProps> = ({ onClose 
   const generateNewSecret = () => {
     try {
       // Import the generateEncryptionKey function
-      import('@neurallog/sdk').then(({ generateEncryptionKey, arrayBufferToBase64 }) => {
+      import('@/lib/mocks/neurallog-sdk').then(({ generateEncryptionKey, arrayBufferToBase64 }) => {
         // Generate a new random encryption key
         const newKey = generateEncryptionKey();
         

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { KeyHierarchy, generateEncryptionKey } from '@neurallog/sdk';
+import { KeyHierarchy, generateEncryptionKey } from '@/lib/mocks/neurallog-sdk';
 
 interface CryptoContextType {
   keyHierarchy: KeyHierarchy | null;
@@ -73,7 +73,7 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
     
     try {
       // Import encryption functions
-      const { encryptLogEntry, generateSearchTokens } = await import('@neurallog/sdk');
+      const { encryptLogEntry, generateSearchTokens } = await import('@/lib/mocks/neurallog-sdk');
       
       // Derive encryption key for this log
       const encryptionKey = await keyHierarchy.deriveLogEncryptionKey(tenantId, logName);
@@ -112,7 +112,7 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
       }
       
       // Import decryption function
-      const { decryptLogEntry } = await import('@neurallog/sdk');
+      const { decryptLogEntry } = await import('@/lib/mocks/neurallog-sdk');
       
       // Derive encryption key for this log
       const encryptionKey = await keyHierarchy.deriveLogEncryptionKey(tenantId, logName);
