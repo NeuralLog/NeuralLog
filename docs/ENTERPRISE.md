@@ -28,28 +28,28 @@ NeuralLog is an **AI-powered, cloud-native logging and analytics platform** desi
 - **💰 Cost Optimization**: Usage-based pricing scales with your actual needs
 - **⚡ Performance**: Sub-100ms query response times at enterprise scale
 
-### 📊 Enterprise ROI Analysis
+### 📊 Enterprise ROI Projections
 
-#### Quantified Business Impact
+#### Projected Business Impact
 ```
-Year 1 ROI Calculation (1000-employee organization):
+Year 1 ROI Projection (1000-employee organization):
 
-Cost Savings:
-• Reduced MTTR: $2.4M annually (75% reduction)
-• Operational Efficiency: $1.8M annually (3 FTE savings)
-• Infrastructure Consolidation: $600K annually
-• Compliance Automation: $400K annually
+Potential Cost Savings:
+• Reduced MTTR: Up to $2.4M annually (target 75% reduction)
+• Operational Efficiency: Up to $1.8M annually (estimated 3 FTE savings)
+• Infrastructure Consolidation: Up to $600K annually
+• Compliance Automation: Up to $400K annually
 
-Total Annual Savings: $5.2M
+Total Projected Annual Savings: Up to $5.2M
 NeuralLog Enterprise Cost: $360K annually
-Net ROI: 1,344% (13.4x return)
+Projected Net ROI: Up to 1,344% (13.4x return)
 ```
 
-#### Time to Value
+#### Projected Time to Value
 - **Week 1**: Initial deployment and basic log ingestion
-- **Week 2**: AI analytics and anomaly detection active
+- **Week 2**: AI analytics and anomaly detection activation
 - **Week 4**: Full team onboarding and advanced features
-- **Month 2**: Complete ROI realization and optimization
+- **Month 2**: Target ROI realization and optimization
 
 ---
 
@@ -59,25 +59,25 @@ Net ROI: 1,344% (13.4x return)
 
 #### 1. **Operational Excellence**
 - **Unified Observability**: Single pane of glass for all application logs
-- **Intelligent Alerting**: AI-powered alerts reduce noise by 90%
+- **Intelligent Alerting**: AI-powered alerts designed to reduce noise by up to 90%
 - **Automated Root Cause Analysis**: Identify issues before they impact customers
 - **Predictive Analytics**: Forecast potential problems and capacity needs
 
 #### 2. **Security & Compliance**
 - **Zero-Knowledge Architecture**: Your data remains encrypted at all times
-- **SOC 2 Type II Certified**: Enterprise-grade security controls
+- **SOC 2 Type II Ready**: Enterprise-grade security controls (certification in progress)
 - **GDPR Compliant**: Built-in data privacy and protection
 - **Audit Trail**: Complete activity logging for compliance requirements
 
 #### 3. **Developer Productivity**
-- **Faster Debugging**: Reduce time to resolution by 75%
+- **Faster Debugging**: Target time to resolution reduction of up to 75%
 - **Contextual Insights**: Correlate logs across services and users
 - **Natural Language Queries**: Ask questions in plain English
 - **Custom Dashboards**: Role-based views for different teams
 
 #### 4. **Cost Efficiency**
 - **Usage-Based Pricing**: Pay only for what you use
-- **Infrastructure Optimization**: Reduce logging infrastructure costs by 50%
+- **Infrastructure Optimization**: Target logging infrastructure cost reduction of up to 50%
 - **Automated Retention**: Intelligent data lifecycle management
 - **Resource Right-Sizing**: AI-powered capacity recommendations
 
@@ -121,16 +121,16 @@ graph LR
 
 ### 📜 Compliance Certifications
 
-#### Current Certifications
-- **✅ SOC 2 Type II**: Security, availability, and confidentiality
-- **✅ GDPR Compliant**: Data privacy and protection regulations
-- **✅ ISO 27001**: Information security management
-- **✅ HIPAA Ready**: Healthcare data protection (BAA available)
+#### Planned Certifications
+- **🎯 SOC 2 Type II**: Security, availability, and confidentiality (in progress)
+- **🎯 GDPR Compliant**: Data privacy and protection regulations (architecture ready)
+- **🎯 ISO 27001**: Information security management (planned)
+- **🎯 HIPAA Ready**: Healthcare data protection (BAA available upon certification)
 
-#### In Progress
-- **🔄 SOC 2 Type I**: Annual recertification
-- **🔄 FedRAMP**: Federal government compliance
-- **🔄 PCI DSS**: Payment card industry standards
+#### Future Roadmap
+- **📋 SOC 2 Type I**: Initial certification target
+- **📋 FedRAMP**: Federal government compliance (planned)
+- **📋 PCI DSS**: Payment card industry standards (planned)
 
 #### Compliance Features
 ```yaml
@@ -157,13 +157,13 @@ Privacy Controls:
 
 ### 📊 Enterprise Scale Requirements
 
-#### Performance Specifications
-| Metric | Specification | SLA |
-|--------|---------------|-----|
-| **Log Ingestion** | 1M logs/second per tenant | 99.9% |
-| **Query Response** | <100ms p95 | 99.5% |
-| **API Availability** | 99.99% uptime | 99.9% |
-| **Data Durability** | 99.999999999% (11 9's) | Guaranteed |
+#### Target Performance Specifications
+| Metric | Target Specification | Planned SLA |
+|--------|---------------------|-------------|
+| **Log Ingestion** | Up to 1M logs/second per tenant | 99.9% |
+| **Query Response** | <100ms p95 target | 99.5% |
+| **API Availability** | 99.99% uptime target | 99.9% |
+| **Data Durability** | 99.999999999% (11 9's) target | Planned |
 
 #### Capacity Limits
 ```yaml
