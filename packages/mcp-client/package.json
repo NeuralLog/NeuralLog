@@ -1,47 +1,62 @@
 {
-  "name": "@ai-mcp-logger/mcp-client",
-  "version": "0.1.0",
-  "description": "Model Context Protocol client for AI-MCP-Logger integration with Claude",
-  "main": "src/index.js",
+  "name": "@neurallog/mcp-client",
+  "version": "1.0.0",
+  "description": "Secure Model Context Protocol client for NeuralLog integration with AI assistants",
+  "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "ai-mcp-logger-client": "./src/index.js"
+    "neurallog-mcp-client": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
-    "start": "node src/index.js",
+    "start": "node dist/index.js",
     "dev": "npx tsx src/index.ts",
     "test": "jest",
-    "docker:build": "docker build -t ai-mcp-logger-mcp-client .",
-    "docker:run": "docker run -i -e WEB_SERVER_URL=http://localhost:3030 ai-mcp-logger-mcp-client",
-    "docker:run:remote": "docker run -i -e WEB_SERVER_URL=http://your-server-address:3030 ai-mcp-logger-mcp-client"
+    "test:security": "npm audit && npm run test",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:check": "node scripts/security-check.js",
+    "docker:build": "docker build -t neurallog-mcp-client .",
+    "docker:run": "docker run -i --env-file .env neurallog-mcp-client",
+    "docker:security-scan": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/app anchore/grype:latest /app"
   },
   "keywords": [
-    "ai",
-    "logger",
+    "neurallog",
     "mcp",
+    "ai",
+    "logging",
+    "zero-knowledge",
+    "security",
     "claude",
     "anthropic"
   ],
-  "author": "AI-MCP-Logger Team",
+  "author": "NeuralLog Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AI-MCP-Logger/mcp-client.git"
+    "url": "git+https://github.com/NeuralLog/NeuralLog.git"
   },
   "bugs": {
-    "url": "https://github.com/AI-MCP-Logger/mcp-client/issues"
+    "url": "https://github.com/NeuralLog/NeuralLog/issues"
   },
-  "homepage": "https://github.com/AI-MCP-Logger/mcp-client#readme",
+  "homepage": "https://github.com/NeuralLog/NeuralLog#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.9.0",
     "axios": "^1.8.4",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
     "@types/node": "^20.17.30",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-security": "^2.1.1",
     "jest": "^29.7.0",
+    "prettier": "^3.2.5",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "tsx": "^4.19.3",

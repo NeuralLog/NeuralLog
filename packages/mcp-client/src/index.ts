@@ -3,22 +3,45 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import axios from "axios";
+import { AuthenticatedHttpClient } from "./auth/AuthenticatedHttpClient.js";
+import { SecurityConfig } from "./config/SecurityConfig.js";
+import { logger } from "./utils/logger.js";
 
 /**
- * AI-MCP-Logger MCP Client
+ * NeuralLog MCP Client
  *
- * This client implements the Model Context Protocol (MCP) for the AI-MCP-Logger system.
- * It provides tools for retrieving and searching logs from the AI-MCP-Logger server.
+ * This client implements the Model Context Protocol (MCP) for the NeuralLog system.
+ * It provides secure, authenticated tools for retrieving and searching logs.
  */
 
-// Configuration
-const webServerUrl = process.env.WEB_SERVER_URL || "http://localhost:3030";
+// Load and validate configuration
+let config: SecurityConfig;
+let httpClient: AuthenticatedHttpClient;
+
+try {
+  config = SecurityConfig.getInstance();
+  logger.info('MCP Client starting with configuration:', config.getLoggableConfig());
+
+  httpClient = new AuthenticatedHttpClient(
+    {
+      authServiceUrl: config.getAuthServiceUrl(),
+      clientId: config.getClientId(),
+      clientSecret: config.getClientSecret(),
+      tenantId: config.getTenantId()
+    },
+    config.getWebServerUrl()
+  );
+
+  logger.info('Authenticated HTTP client initialized');
+} catch (error) {
+  logger.error('Failed to initialize MCP client:', error);
+  process.exit(1);
+}
 
 // Create an MCP server
 const server = new McpServer({
-  name: "AI-MCP-Logger",
-  version: "0.1.0"
+  name: "NeuralLog-MCP-Client",
+  version: "1.0.0"
 });
 
 // Add get_logs tool
@@ -27,12 +50,14 @@ server.tool(
   { limit: z.number().optional().describe("Maximum number of log names to return (default: 1000)") },
   async (args) => {
     try {
-      // Forward to Web Server
-      const response = await axios.get(`${webServerUrl}/logs`, {
+      logger.debug('Getting logs with limit:', args.limit);
+
+      // Use authenticated HTTP client
+      const response = await httpClient.get('/logs', {
         params: { limit: args.limit || 1000 }
       });
 
-      // Return the data directly without additional formatting
+      logger.debug('Successfully retrieved logs');
       return {
         content: [{
           type: "text",
@@ -40,12 +65,14 @@ server.tool(
         }]
       };
     } catch (error: any) {
+      logger.error('Error getting logs:', error.message);
       return {
         content: [{
           type: "text",
           text: JSON.stringify({
             error: true,
-            message: `Error getting logs: ${error.message || String(error)}`
+            message: `Error getting logs: ${error.message || String(error)}`,
+            tenant: httpClient.getTenantId()
           }, null, 2)
         }],
         isError: true
@@ -63,11 +90,14 @@ server.tool(
   },
   async (args) => {
     try {
-      // Forward to Web Server
-      const response = await axios.get(`${webServerUrl}/logs/${args.log_name}`, {
+      logger.debug('Getting log:', args.log_name);
+
+      // Use authenticated HTTP client
+      const response = await httpClient.get(`/logs/${args.log_name}`, {
         params: { limit: args.limit || 100 }
       });
 
+      logger.debug('Successfully retrieved log:', args.log_name);
       return {
         content: [{
           type: "text",
@@ -75,12 +105,14 @@ server.tool(
         }]
       };
     } catch (error: any) {
+      logger.error('Error getting log:', args.log_name, error.message);
       return {
         content: [{
           type: "text",
           text: JSON.stringify({
             error: true,
-            message: `Error getting log '${args.log_name}': ${error.message || String(error)}`
+            message: `Error getting log '${args.log_name}': ${error.message || String(error)}`,
+            tenant: httpClient.getTenantId()
           }, null, 2)
         }],
         isError: true
@@ -119,10 +151,12 @@ server.tool(
         }
       }
 
-      // Call the server-side search endpoint
-      const response = await axios.get(`${webServerUrl}/search`, { params });
+      logger.debug('Searching logs with params:', params);
 
-      // Return the results as JSON (default format for AI consumption)
+      // Use authenticated HTTP client
+      const response = await httpClient.get('/search', { params });
+
+      logger.debug('Successfully searched logs');
       return {
         content: [{
           type: "text",
@@ -130,12 +164,14 @@ server.tool(
         }]
       };
     } catch (error: any) {
+      logger.error('Error searching logs:', error.message);
       return {
         content: [{
           type: "text",
           text: JSON.stringify({
             error: true,
-            message: `Error searching logs: ${error.message || String(error)}`
+            message: `Error searching logs: ${error.message || String(error)}`,
+            tenant: httpClient.getTenantId()
           }, null, 2)
         }],
         isError: true
@@ -153,9 +189,12 @@ server.tool(
   },
   async (args) => {
     try {
-      // Forward to Web Server
-      const response = await axios.post(`${webServerUrl}/logs/${args.log_name}`, args.data);
+      logger.debug('Appending to log:', args.log_name);
 
+      // Use authenticated HTTP client
+      const response = await httpClient.post(`/logs/${args.log_name}`, args.data);
+
+      logger.debug('Successfully appended to log:', args.log_name);
       return {
         content: [{
           type: "text",
@@ -163,12 +202,14 @@ server.tool(
         }]
       };
     } catch (error: any) {
+      logger.error('Error appending to log:', args.log_name, error.message);
       return {
         content: [{
           type: "text",
           text: JSON.stringify({
             error: true,
-            message: `Error appending to log '${args.log_name}': ${error.message || String(error)}`
+            message: `Error appending to log '${args.log_name}': ${error.message || String(error)}`,
+            tenant: httpClient.getTenantId()
           }, null, 2)
         }],
         isError: true
@@ -185,9 +226,12 @@ server.tool(
   },
   async (args) => {
     try {
-      // Forward to Web Server
-      const response = await axios.delete(`${webServerUrl}/logs/${args.log_name}`);
+      logger.debug('Clearing log:', args.log_name);
 
+      // Use authenticated HTTP client
+      const response = await httpClient.delete(`/logs/${args.log_name}`);
+
+      logger.debug('Successfully cleared log:', args.log_name);
       return {
         content: [{
           type: "text",
@@ -195,12 +239,14 @@ server.tool(
         }]
       };
     } catch (error: any) {
+      logger.error('Error clearing log:', args.log_name, error.message);
       return {
         content: [{
           type: "text",
           text: JSON.stringify({
             error: true,
-            message: `Error clearing log '${args.log_name}': ${error.message || String(error)}`
+            message: `Error clearing log '${args.log_name}': ${error.message || String(error)}`,
+            tenant: httpClient.getTenantId()
           }, null, 2)
         }],
         isError: true
@@ -209,6 +255,23 @@ server.tool(
   }
 );
 
+// Add graceful shutdown handling
+process.on('SIGINT', () => {
+  logger.info('Received SIGINT, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  logger.info('Received SIGTERM, shutting down gracefully');
+  process.exit(0);
+});
+
 // Start the server
-const transport = new StdioServerTransport();
-await server.connect(transport);
+try {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  logger.info('MCP server started successfully');
+} catch (error) {
+  logger.error('Failed to start MCP server:', error);
+  process.exit(1);
+}
