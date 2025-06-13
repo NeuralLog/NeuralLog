@@ -1,4 +1,5 @@
 import { DashboardController } from '@/components/dashboard/DashboardController';
+import { EnhancedDashboard } from '@/components/dashboard/EnhancedDashboard';
 
 export default function DashboardPage() {
   return (
@@ -6,8 +7,11 @@ export default function DashboardPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
       </div>
-      
-      <DashboardController />
+
+      <div className="space-y-8">
+        <EnhancedDashboard />
+        <DashboardController />
+      </div>
     </div>
   );
 }

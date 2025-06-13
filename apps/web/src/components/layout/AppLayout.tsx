@@ -3,7 +3,11 @@
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { FiHome, FiKey, FiSettings, FiLogOut, FiMoon, FiSun, FiMenu, FiList, FiUserPlus } from 'react-icons/fi';
+import {
+  FiHome, FiKey, FiSettings, FiLogOut, FiMoon, FiSun, FiMenu, FiList, FiUserPlus,
+  FiCpu, FiShield, FiBarChart3, FiEye, FiZap, FiLock, FiActivity, FiTrendingUp,
+  FiSearch, FiDatabase, FiUsers, FiServer, FiCheckCircle, FiAlertTriangle
+} from 'react-icons/fi';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useAuth } from '@/context/AuthContext';
 
@@ -12,19 +16,78 @@ interface SidebarItemProps {
   href: string;
   isActive: boolean;
   children: React.ReactNode;
+  badge?: string;
+  isNew?: boolean;
 }
 
-function SidebarItem({ icon: Icon, href, isActive, children }: SidebarItemProps) {
+interface SidebarSectionProps {
+  title: string;
+  children: React.ReactNode;
+  isCollapsible?: boolean;
+  defaultExpanded?: boolean;
+}
+
+function SidebarItem({ icon: Icon, href, isActive, children, badge, isNew }: SidebarItemProps) {
   return (
     <Link href={href} className="w-full no-underline">
       <div
-        className={`flex items-center p-4 mx-4 rounded-lg cursor-pointer group ${isActive ? 'bg-brand-500 text-white' : 'bg-transparent text-gray-600 dark:text-gray-300'} hover:${isActive ? 'bg-brand-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'}`}
+        className={`flex items-center justify-between p-3 mx-2 rounded-lg cursor-pointer group transition-colors ${
+          isActive
+            ? 'bg-brand-500 text-white'
+            : 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+        }`}
         data-testid={`sidebar-item-${href.replace(/\//g, '-')}`}
       >
-        <Icon className="mr-4 text-base" />
-        {children}
+        <div className="flex items-center">
+          <Icon className="mr-3 text-base" />
+          <span className="text-sm font-medium">{children}</span>
+          {isNew && (
+            <span className="ml-2 px-1.5 py-0.5 text-xs font-semibold bg-green-500 text-white rounded-full">
+              NEW
+            </span>
+          )}
+        </div>
+        {badge && (
+          <span className="px-2 py-1 text-xs font-semibold bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full">
+            {badge}
+          </span>
+        )}
       </div>
     </Link>
+  );
+}
+
+function SidebarSection({ title, children, isCollapsible = false, defaultExpanded = true }: SidebarSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+  return (
+    <div className="mb-4">
+      {isCollapsible ? (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center justify-between w-full px-2 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hover:text-gray-700 dark:hover:text-gray-300"
+        >
+          <span>{title}</span>
+          <svg
+            className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      ) : (
+        <div className="px-2 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          {title}
+        </div>
+      )}
+      {(!isCollapsible || isExpanded) && (
+        <div className="space-y-1">
+          {children}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -78,22 +141,77 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </button>
           </div>
           <div className="flex-1 px-2 py-4 overflow-y-auto">
-            <nav className="flex flex-col space-y-2">
-              <SidebarItem icon={FiHome} href="/dashboard" isActive={pathname === '/dashboard'}>
-                Dashboard
-              </SidebarItem>
-              <SidebarItem icon={FiList} href="/logs" isActive={pathname.startsWith('/logs')}>
-                Logs
-              </SidebarItem>
-              <SidebarItem icon={FiKey} href="/apikeys" isActive={pathname === '/apikeys'}>
-                API Keys
-              </SidebarItem>
-              <SidebarItem icon={FiUserPlus} href="/admin/invitations" isActive={pathname === '/admin/invitations'}>
-                Invitations
-              </SidebarItem>
-              <SidebarItem icon={FiSettings} href="/settings" isActive={pathname === '/settings'}>
-                Settings
-              </SidebarItem>
+            <nav className="flex flex-col">
+              {/* Core */}
+              <SidebarSection title="Core">
+                <SidebarItem icon={FiHome} href="/dashboard" isActive={pathname === '/dashboard'}>
+                  Dashboard
+                </SidebarItem>
+                <SidebarItem icon={FiList} href="/logs" isActive={pathname.startsWith('/logs')}>
+                  Logs
+                </SidebarItem>
+                <SidebarItem icon={FiSearch} href="/search" isActive={pathname === '/search'}>
+                  Search & Query
+                </SidebarItem>
+              </SidebarSection>
+
+              {/* AI & Automation */}
+              <SidebarSection title="AI & Automation">
+                <SidebarItem icon={FiCpu} href="/ai-agents" isActive={pathname.startsWith('/ai-agents')} isNew>
+                  AI Agents
+                </SidebarItem>
+                <SidebarItem icon={FiZap} href="/ai-insights" isActive={pathname.startsWith('/ai-insights')} isNew>
+                  AI Insights
+                </SidebarItem>
+                <SidebarItem icon={FiActivity} href="/automation" isActive={pathname.startsWith('/automation')}>
+                  Automation
+                </SidebarItem>
+              </SidebarSection>
+
+              {/* Analytics & Monitoring */}
+              <SidebarSection title="Analytics">
+                <SidebarItem icon={FiBarChart3} href="/analytics" isActive={pathname.startsWith('/analytics')}>
+                  Analytics
+                </SidebarItem>
+                <SidebarItem icon={FiEye} href="/monitoring" isActive={pathname.startsWith('/monitoring')}>
+                  Real-time Monitoring
+                </SidebarItem>
+                <SidebarItem icon={FiTrendingUp} href="/metrics" isActive={pathname.startsWith('/metrics')}>
+                  Custom Metrics
+                </SidebarItem>
+              </SidebarSection>
+
+              {/* Security & Compliance */}
+              <SidebarSection title="Security">
+                <SidebarItem icon={FiShield} href="/security" isActive={pathname.startsWith('/security')}>
+                  Security Dashboard
+                </SidebarItem>
+                <SidebarItem icon={FiLock} href="/encryption" isActive={pathname.startsWith('/encryption')}>
+                  Encryption
+                </SidebarItem>
+                <SidebarItem icon={FiCheckCircle} href="/compliance" isActive={pathname.startsWith('/compliance')}>
+                  Compliance
+                </SidebarItem>
+              </SidebarSection>
+
+              {/* Administration */}
+              <SidebarSection title="Administration">
+                <SidebarItem icon={FiKey} href="/apikeys" isActive={pathname === '/apikeys'}>
+                  API Keys
+                </SidebarItem>
+                <SidebarItem icon={FiUsers} href="/users" isActive={pathname.startsWith('/users')}>
+                  User Management
+                </SidebarItem>
+                <SidebarItem icon={FiUserPlus} href="/admin/invitations" isActive={pathname === '/admin/invitations'}>
+                  Invitations
+                </SidebarItem>
+                <SidebarItem icon={FiServer} href="/system" isActive={pathname.startsWith('/system')}>
+                  System Health
+                </SidebarItem>
+                <SidebarItem icon={FiSettings} href="/settings" isActive={pathname === '/settings'}>
+                  Settings
+                </SidebarItem>
+              </SidebarSection>
             </nav>
           </div>
           <div className="flex items-center justify-between p-4 border-t">
@@ -147,22 +265,77 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </div>
               )}
               <div className="flex flex-col flex-1 mt-5">
-                <nav className="flex-1 space-y-2">
-                  <SidebarItem icon={FiHome} href="/dashboard" isActive={pathname === '/dashboard'}>
-                    Dashboard
-                  </SidebarItem>
-                  <SidebarItem icon={FiList} href="/logs" isActive={pathname.startsWith('/logs')}>
-                    Logs
-                  </SidebarItem>
-                  <SidebarItem icon={FiKey} href="/apikeys" isActive={pathname === '/apikeys'}>
-                    API Keys
-                  </SidebarItem>
-                  <SidebarItem icon={FiUserPlus} href="/admin/invitations" isActive={pathname === '/admin/invitations'}>
-                    Invitations
-                  </SidebarItem>
-                  <SidebarItem icon={FiSettings} href="/settings" isActive={pathname === '/settings'}>
-                    Settings
-                  </SidebarItem>
+                <nav className="flex-1">
+                  {/* Core */}
+                  <SidebarSection title="Core">
+                    <SidebarItem icon={FiHome} href="/dashboard" isActive={pathname === '/dashboard'}>
+                      Dashboard
+                    </SidebarItem>
+                    <SidebarItem icon={FiList} href="/logs" isActive={pathname.startsWith('/logs')}>
+                      Logs
+                    </SidebarItem>
+                    <SidebarItem icon={FiSearch} href="/search" isActive={pathname === '/search'}>
+                      Search & Query
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  {/* AI & Automation */}
+                  <SidebarSection title="AI & Automation">
+                    <SidebarItem icon={FiCpu} href="/ai-agents" isActive={pathname.startsWith('/ai-agents')} isNew>
+                      AI Agents
+                    </SidebarItem>
+                    <SidebarItem icon={FiZap} href="/ai-insights" isActive={pathname.startsWith('/ai-insights')} isNew>
+                      AI Insights
+                    </SidebarItem>
+                    <SidebarItem icon={FiActivity} href="/automation" isActive={pathname.startsWith('/automation')}>
+                      Automation
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  {/* Analytics & Monitoring */}
+                  <SidebarSection title="Analytics">
+                    <SidebarItem icon={FiBarChart3} href="/analytics" isActive={pathname.startsWith('/analytics')}>
+                      Analytics
+                    </SidebarItem>
+                    <SidebarItem icon={FiEye} href="/monitoring" isActive={pathname.startsWith('/monitoring')}>
+                      Real-time Monitoring
+                    </SidebarItem>
+                    <SidebarItem icon={FiTrendingUp} href="/metrics" isActive={pathname.startsWith('/metrics')}>
+                      Custom Metrics
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  {/* Security & Compliance */}
+                  <SidebarSection title="Security">
+                    <SidebarItem icon={FiShield} href="/security" isActive={pathname.startsWith('/security')}>
+                      Security Dashboard
+                    </SidebarItem>
+                    <SidebarItem icon={FiLock} href="/encryption" isActive={pathname.startsWith('/encryption')}>
+                      Encryption
+                    </SidebarItem>
+                    <SidebarItem icon={FiCheckCircle} href="/compliance" isActive={pathname.startsWith('/compliance')}>
+                      Compliance
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  {/* Administration */}
+                  <SidebarSection title="Administration">
+                    <SidebarItem icon={FiKey} href="/apikeys" isActive={pathname === '/apikeys'}>
+                      API Keys
+                    </SidebarItem>
+                    <SidebarItem icon={FiUsers} href="/users" isActive={pathname.startsWith('/users')}>
+                      User Management
+                    </SidebarItem>
+                    <SidebarItem icon={FiUserPlus} href="/admin/invitations" isActive={pathname === '/admin/invitations'}>
+                      Invitations
+                    </SidebarItem>
+                    <SidebarItem icon={FiServer} href="/system" isActive={pathname.startsWith('/system')}>
+                      System Health
+                    </SidebarItem>
+                    <SidebarItem icon={FiSettings} href="/settings" isActive={pathname === '/settings'}>
+                      Settings
+                    </SidebarItem>
+                  </SidebarSection>
                 </nav>
               </div>
             </div>
