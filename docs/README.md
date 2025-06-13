@@ -43,8 +43,11 @@ NeuralLog's standout feature is its comprehensive AI agent integration through t
 ### APIs & SDKs
 Comprehensive documentation for integrating NeuralLog into your applications.
 
-- [📋 **API Reference**](./api-reference.md) - Complete REST API documentation
-- [📦 **SDK Documentation**](./sdk-documentation.md) - Client libraries for all major languages
+- [🔌 **API Documentation**](API.md) - **Complete REST API reference and examples**
+- [💻 **Developer Guide**](DEVELOPER.md) - **Contributing and development setup**
+- [📖 **User Guide**](USER_GUIDE.md) - **Complete platform usage guide**
+- [📋 API Reference](./api-reference.md) - Complete REST API documentation
+- [📦 SDK Documentation](./sdk-documentation.md) - Client libraries for all major languages
 - [🔗 GraphQL API](../packages/specs/16-graphql-api.md) - GraphQL interface documentation
 - [📡 WebSocket API](../packages/specs/15-websocket-api.md) - Real-time streaming
 
@@ -82,12 +85,17 @@ NeuralLog's core strength is its zero-knowledge approach to telemetry.
 ### Deployment Options
 Choose the deployment method that fits your needs.
 
-- [🚀 **Deployment Guide**](./deployment.md) - Complete deployment documentation
+- [🛠️ **Deployment Guide**](../DEPLOYMENT.md) - **Complete local and production deployment**
+- [☸️ **Kubernetes Guide**](KUBERNETES.md) - **Kubernetes operator and cluster management**
+- [🚀 Deployment Guide](./deployment.md) - Complete deployment documentation
 - [🐳 Docker Deployment](../infra/README.md) - Container-based deployment
 - [☸️ Kubernetes](../packages/specs/22-kubernetes-deployment.md) - Kubernetes deployment
 - [☁️ Cloud Providers](./deployment.md#cloud-provider-deployments) - AWS, GCP, Azure
 
 ### Operations & Monitoring
+- [🔧 **Operations Manual**](OPERATIONS.md) - **Day-to-day operations and maintenance**
+- [📊 **Monitoring Guide**](MONITORING.md) - **Prometheus and Grafana setup**
+- [🐛 **Troubleshooting**](TROUBLESHOOTING.md) - **Common issues and solutions**
 - [📊 Monitoring & Observability](../packages/specs/23-monitoring-observability.md) - Set up monitoring
 - [📈 Scaling & Performance](../packages/specs/25-scaling-performance.md) - Scale for production
 - [🔄 Backup & Recovery](../packages/specs/24-backup-recovery.md) - Data protection strategies
@@ -98,6 +106,7 @@ Choose the deployment method that fits your needs.
 ### System Architecture
 Deep dive into NeuralLog's technical architecture.
 
+- [📐 **System Architecture**](ARCHITECTURE.md) - **Complete system design and components**
 - [🏗️ Core Architecture](../packages/specs/01-core-architecture.md) - System overview
 - [🏢 Multi-Tenant Design](../packages/specs/03-tenant-isolation.md) - Tenant isolation
 - [🔄 Event-Action Model](../packages/specs/02-event-action-model.md) - Core data model
