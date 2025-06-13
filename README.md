@@ -133,7 +133,21 @@ Technical specifications and schemas for the NeuralLog platform.
 Component registry for managing NeuralLog components and plugins.
 
 ### MCP Client (`packages/mcp-client`)
-Model Context Protocol client for AI integration with Claude.
+**🤖 AI Agent Integration**: Model Context Protocol client for seamless AI integration with Claude Desktop, ChatGPT, and custom AI agents. Enables AI assistants to securely access and analyze your zero-knowledge telemetry data.
+
+**Key Features:**
+- ✅ **Claude Desktop Integration**: Native support for Anthropic's Claude
+- ✅ **Secure Authentication**: M2M authentication with automatic token refresh
+- ✅ **Zero-Knowledge Compatible**: Maintains privacy while enabling AI analysis
+- ✅ **Custom AI Agents**: SDK for building custom AI integrations
+- ✅ **Production Ready**: Enterprise-grade security and reliability
+
+**Quick Setup:**
+```bash
+npm install -g @neurallog/mcp-client
+```
+
+See our [**AI Agents Guide**](./docs/agents.md) for complete integration documentation.
 
 ## 🌩️ Infrastructure
 
@@ -166,10 +180,32 @@ With the monorepo, you can now:
 
 ## 📖 Documentation
 
-- [Technical Specifications](./packages/specs/)
-- [API Documentation](./apps/docs/)
-- [SDK Documentation](./sdks/)
-- [Infrastructure Guide](./infra/)
+### 🎯 Getting Started
+- [📖 Platform Overview](./docs/overview.md) - Complete platform overview and features
+- [⚡ Quick Start Guide](./docs/quick-start.md) - Get started in 5 minutes
+- [🔧 Configuration Guide](./packages/specs/docs/configuration.md) - Detailed configuration options
+
+### 🤖 AI Integration
+- [🤖 **AI Agents Guide**](./docs/agents.md) - **Comprehensive AI integration documentation**
+- [🔌 MCP Integration](./packages/specs/07-mcp-integration-overview.md) - Model Context Protocol details
+- [🧠 Custom AI Agents](./packages/specs/09-mcp-client-sdk.md) - Building custom AI integrations
+
+### 🛠️ Development
+- [📋 API Reference](./docs/api-reference.md) - Complete API documentation
+- [📦 SDK Documentation](./docs/sdk-documentation.md) - Client SDK guides for all languages
+- [🔐 Security Guide](./docs/security.md) - Security best practices and architecture
+- [🚀 Deployment Guide](./docs/deployment.md) - Production deployment instructions
+
+### 🏢 Enterprise & Architecture
+- [🏗️ Technical Specifications](./packages/specs/) - Detailed technical specifications
+- [📊 Monitoring & Observability](./packages/specs/23-monitoring-observability.md) - Monitoring setup
+- [🔒 Compliance & Security](./packages/specs/10-security-model.md) - Security model details
+- [📈 Scaling Guide](./packages/specs/25-scaling-performance.md) - Performance and scaling
+
+### 🛠️ Infrastructure
+- [🐳 Docker Setup](./infra/) - Container deployment
+- [☸️ Kubernetes](./packages/specs/22-kubernetes-deployment.md) - Kubernetes deployment
+- [☁️ Cloud Providers](./infra/docs/) - Cloud-specific deployment guides
 
 ## 🤝 Contributing
 
@@ -197,6 +233,39 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 > Zero-Knowledge Telemetry and Logging Platform
 
 NeuralLog is a comprehensive, privacy-first logging and telemetry platform that enables organizations to collect and analyze data without compromising user privacy through zero-knowledge architecture.
+
+## 🤖 AI Integration Highlight
+
+**NeuralLog now features comprehensive AI agent integration!** Connect Claude Desktop, ChatGPT, and custom AI agents to your zero-knowledge telemetry data.
+
+```bash
+# Install MCP Client for AI integration
+npm install -g @neurallog/mcp-client
+
+# Configure Claude Desktop (see docs/agents.md for details)
+# Add to claude_desktop_config.json:
+{
+  "mcpServers": {
+    "neurallog": {
+      "command": "neurallog-mcp-client",
+      "env": {
+        "WEB_SERVER_URL": "https://your-neurallog-instance.com",
+        "AUTH_CLIENT_ID": "your-client-id",
+        "AUTH_CLIENT_SECRET": "your-client-secret",
+        "TENANT_ID": "your-tenant-id"
+      }
+    }
+  }
+}
+```
+
+**✨ What AI agents can do with NeuralLog:**
+- 🔍 **Intelligent Log Analysis**: AI-powered pattern detection and anomaly identification
+- 🚨 **Automated Incident Response**: AI agents respond to critical issues automatically
+- 📊 **Smart Dashboards**: AI-generated insights and recommendations
+- 🔒 **Zero-Knowledge Privacy**: All analysis happens on encrypted data
+
+👉 **[Complete AI Integration Guide](./docs/agents.md)**
 
 ## 🚀 Quick Start
 
