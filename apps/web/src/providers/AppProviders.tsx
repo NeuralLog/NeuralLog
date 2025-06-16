@@ -15,19 +15,7 @@ import { CryptoProvider } from '../components/crypto';
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <TenantProvider>
-        <UserProvider>
-          {/* Authentication Context (Login/Logout/User State) */}
-          <AuthenticationProvider>
-            {/* Authorization Context (Permissions/Roles via SDK) */}
-            <AuthorizationProvider>
-              <CryptoProvider>
-                {children}
-              </CryptoProvider>
-            </AuthorizationProvider>
-          </AuthenticationProvider>
-        </UserProvider>
-      </TenantProvider>
+      {children}
     </ThemeProvider>
   );
 }
