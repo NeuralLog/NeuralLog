@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { ApiKeyService } from '../services/ApiKeyService';
 import { userService } from '../services/UserService';
 import { ApiError } from '@neurallog/client-sdk';
-import { ApiKeyChallenge, ApiKeyChallengeVerification } from '@neurallog/client-sdk';
+import { ApiKeyChallenge, ApiKeyChallengeVerification } from '../types/auth';
 import { logger } from '../services/logger';
 import { randomBytes } from 'crypto';
 

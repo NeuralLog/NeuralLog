@@ -1,4 +1,4 @@
-import { NeuralLogClient as ClientSDK } from '@neurallog/typescript-client-sdk';
+import { NeuralLogClient as ClientSDK } from '@neurallog/client-sdk';
 import { LogLevel, LogEntryData, SearchCriteria } from './NeuralLog';
 
 /**
@@ -26,7 +26,7 @@ export class NeuralLogClient {
     // Create client SDK instance
     this.client = new ClientSDK({
       tenantId,
-      apiUrl: serverUrl,
+      serverUrl: serverUrl,
       authUrl,
       apiKey
     });
@@ -108,9 +108,20 @@ export class NeuralLogClient {
           limit: criteria.limit
         });
       } else {
-        // Get all logs and filter client-side
-        const allLogs = await this.client.getAllLogs({ limit: criteria.limit });
-        
+        // Get all log names and then get logs for each
+        const logNames = await this.client.getLogNames();
+        let allLogs: any[] = [];
+
+        // Get logs from each log name
+        for (const logName of logNames) {
+          try {
+            const logs = await this.client.getLogs(logName, { limit: criteria.limit });
+            allLogs = allLogs.concat(logs);
+          } catch (error) {
+            console.warn(`Failed to get logs for ${logName}:`, error);
+          }
+        }
+
         // Filter logs based on criteria
         return allLogs.filter(log => {
           // Filter by query
@@ -148,7 +159,7 @@ export class NeuralLogClient {
   
   /**
    * Clear a log
-   * 
+   *
    * @param logName Log name
    * @returns Promise that resolves when the log is cleared
    */
@@ -158,7 +169,7 @@ export class NeuralLogClient {
       if (!this.client.isAuthenticated() && this.apiKey) {
         await this.client.authenticateWithApiKey(this.apiKey);
       }
-      
+
       // TODO: Implement clear log in the client SDK
       // For now, we'll just log a message
       console.warn('Clear log not implemented in the client SDK');
@@ -180,18 +191,8 @@ export class NeuralLogClient {
         await this.client.authenticateWithApiKey(this.apiKey);
       }
       
-      // Get all logs
-      const allLogs = await this.client.getAllLogs();
-      
-      // Extract unique log names
-      const logNames = new Set<string>();
-      for (const log of allLogs) {
-        if (log.name) {
-          logNames.add(log.name);
-        }
-      }
-      
-      return Array.from(logNames);
+      // Get log names directly from the client
+      return await this.client.getLogNames();
     } catch (error) {
       console.error('Failed to get log names:', error);
       throw error;

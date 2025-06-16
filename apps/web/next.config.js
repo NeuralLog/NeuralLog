@@ -8,7 +8,7 @@ const nextConfig = {
   reactStrictMode: true,
   // Specify the source directory
   experimental: {
-    appDir: true,
+    // appDir is now stable in Next.js 15, no longer needed in experimental
   },
 
   // Disable ESLint during builds to focus on compilation errors first
@@ -20,6 +20,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
+  // Disable static optimization to prevent build-time execution
+  output: 'standalone',
 
   // Configure webpack to handle Node.js modules
   webpack: (config, { isServer }) => {

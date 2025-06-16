@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/AuthService';
-import { ApiError, Tenant } from '@neurallog/client-sdk';
+import { ApiError } from '@neurallog/client-sdk';
+import { Tenant } from '../types/auth';
 
 export const tenantRouter = (authService: AuthService): Router => {
   const router = Router();

@@ -1,7 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { roleService } from '../services/roleService';
 import { authMiddleware } from '../middleware/AuthMiddleware';
-import { ApiError, Role } from '@neurallog/client-sdk';
+import { ApiError } from '@neurallog/client-sdk';
+import { Role } from '../types/auth';
 
 const router = Router();
 

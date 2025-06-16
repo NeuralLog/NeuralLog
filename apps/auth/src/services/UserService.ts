@@ -1,7 +1,7 @@
 import { authService } from './AuthService';
 import { logger } from './logger';
 import { db } from '../db';
-import { User } from '@neurallog/client-sdk/dist/types/api';
+import { ExtendedUser as User } from '../types/auth';
 
 /**
  * User service

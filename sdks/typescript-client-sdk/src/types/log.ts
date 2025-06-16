@@ -1,6 +1,6 @@
 /**
  * Log Server API Types
- *
+ * 
  * THIS FILE IS AUTO-GENERATED - DO NOT EDIT DIRECTLY
  * Generated from OpenAPI schema
  */
@@ -107,26 +107,88 @@ export interface LogSearchOptions {
 }
 
 export interface PaginatedLogEntries {
-  /** Result items */
-  items?: LogEntry[];
-
-  /** Result entries (alias for items for backward compatibility) */
-  entries: LogEntry[];
-
-  /** Total count */
-  total: number;
-
-  /** Total count (alias for total for backward compatibility) */
-  totalCount: number;
-
-  /** Result limit */
-  limit: number;
-
-  /** Result offset */
-  offset: number;
-
-  /** Whether there are more results */
+  entries?: LogEntry[];
+  /**
+   * Total number of entries
+   */
+  total?: number;
+  /**
+   * Maximum number of entries returned
+   */
+  limit?: number;
+  /**
+   * Offset for pagination
+   */
+  offset?: number;
+  /**
+   * Whether there are more entries
+   */
   hasMore?: boolean;
+}
+
+export interface PermissionCheckRequest {
+  /**
+   * Action to check (e.g., read, write, delete)
+   */
+  action: string;
+  /**
+   * Resource to check permission for
+   */
+  resource: string;
+  contextualTuples?: object[];
+}
+
+export interface PermissionCheckResponse {
+  /**
+   * Whether the permission is allowed
+   */
+  allowed: boolean;
+}
+
+export interface RetentionPolicy {
+  /**
+   * Tenant ID
+   */
+  tenantId: string;
+  /**
+   * Log name (encrypted) - if not present, this is the tenant-wide default policy
+   */
+  logName?: string;
+  /**
+   * Retention period in milliseconds (-1 for unlimited retention)
+   * @format int64
+   */
+  retentionPeriodMs: number;
+  /**
+   * Creation timestamp
+   * @format date-time
+   */
+  createdAt?: string;
+  /**
+   * Last update timestamp
+   * @format date-time
+   */
+  updatedAt?: string;
+  /**
+   * User ID of the user who created the policy
+   */
+  createdBy?: string;
+  /**
+   * User ID of the user who last updated the policy
+   */
+  updatedBy?: string;
+}
+
+export interface RetentionPolicyRequest {
+  /**
+   * Retention period in milliseconds (-1 for unlimited retention)
+   * @format int64
+   */
+  retentionPeriodMs: number;
+  /**
+   * Log name (encrypted) - if not provided, sets the tenant-wide default policy
+   */
+  logName?: string;
 }
 
 export interface Error {
@@ -171,8 +233,6 @@ export type UpdateLogData = Log;
 export type DeleteLogData = any;
 export type GetLogEntriesData = PaginatedLogEntries;
 export type SearchLogEntriesData = PaginatedLogEntries;
-
-// PaginatedLogEntries is defined above
 
 export interface GetLogEntriesParams {
   /**

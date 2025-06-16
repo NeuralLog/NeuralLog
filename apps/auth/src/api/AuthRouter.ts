@@ -2,14 +2,14 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/AuthService';
 import { auth0Service } from '../services/auth0Service';
 import { userService } from '../services/UserService';
+import { ApiError } from '@neurallog/client-sdk';
 import {
-  ApiError,
   Login,
   TokenValidationResult,
   PermissionCheck,
   TokenExchangeResult,
   ResourceTokenVerificationResult
-} from '@neurallog/client-sdk';
+} from '../types/auth';
 import { logger } from '../services/logger';
 import { tokenExchangeService } from '../services/tokenExchangeService';
 

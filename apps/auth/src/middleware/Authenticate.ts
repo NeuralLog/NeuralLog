@@ -5,7 +5,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserService } from '../services/UserService';
-import { logger } from '../utils/logger';
+import { logger } from '../services/logger';
 
 // Extend Express Request type
 declare global {

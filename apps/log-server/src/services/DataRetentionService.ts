@@ -63,7 +63,7 @@ export class DataRetentionService {
       }
 
       // Get the storage adapter for this tenant
-      const storageAdapter = this.storageAdapterFactory.createAdapter(tenantId);
+      const storageAdapter = StorageAdapterFactory.createAdapter(tenantId);
 
       // Find and delete expired log entries
       const cutoffTime = Date.now() - policy.retentionPeriodMs;

@@ -53,6 +53,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const checkAuth = async () => {
       setIsLoading(true);
       try {
+        // Only check auth on the client side (not during build)
+        if (typeof window === 'undefined') {
+          setIsLoading(false);
+          return;
+        }
+
         // Call the /api/auth/me proxy route to check cookie and validate token
         const response = await fetch('/api/auth/me', {
           method: 'GET', // Use GET for checking status

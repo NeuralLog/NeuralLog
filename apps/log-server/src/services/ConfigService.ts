@@ -72,5 +72,3 @@ export class ConfigService {
     return parsed;
   }
 }
-
-export { ConfigService };

@@ -1,4 +1,4 @@
-import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '@neurallog/client-sdk/dist/types/api';
+import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '../types/log';
 
 /**
  * Storage adapter interface for storing log entries

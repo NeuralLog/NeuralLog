@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import axios from 'axios';
 import { LogEntry, LogResponse, LogNamesResponse, LogStatistics, AggregateStatistics } from '@neurallog/shared';
 import { NeuralLogClient } from './NeuralLogClient';
 
@@ -14,7 +15,6 @@ export enum LogLevel {
   ERROR = 'error',
   FATAL = 'fatal'
 }
-  ``
 /**
  * Log entry data
  */
@@ -73,6 +73,11 @@ export interface LoggerOptions {
    * Whether to include timestamps automatically
    */
   includeTimestamps?: boolean;
+
+  /**
+   * API key for authentication
+   */
+  apiKey?: string;
 }
 
 /**

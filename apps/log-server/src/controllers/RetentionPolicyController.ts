@@ -222,7 +222,7 @@ export class RetentionPolicyController {
       }
 
       // Get the storage adapter for this tenant
-      const storageAdapter = this.storageAdapterFactory.createAdapter(tenantId);
+      const storageAdapter = StorageAdapterFactory.createAdapter(tenantId);
 
       // Calculate the cutoff time
       const cutoffTime = Date.now() - retentionPeriodMs;
@@ -242,6 +242,3 @@ export class RetentionPolicyController {
     }
   };
 }
-
-// Export the controller class
-export { RetentionPolicyController };

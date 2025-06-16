@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/UserService';
-import { ApiError, UserProfile } from '@neurallog/client-sdk';
+import { ApiError } from '@neurallog/client-sdk';
+import { UserProfile } from '../types/auth';
 import { logger } from '../services/logger';
 
 export const userRouter = (userService: UserService): Router => {

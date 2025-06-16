@@ -1,5 +1,5 @@
 import { LogLevel } from '@neurallog/shared';
-import { NeuralLogClient } from '@neurallog/client-sdk';
+import { NeuralLogClient } from './NeuralLogClient';
 
 /**
  * Log entry data
@@ -121,18 +121,12 @@ export class AILogger {
     this.includeTimestamps = options.includeTimestamps !== false; // Default to true
 
     // Initialize client
-    this.client = new NeuralLogClient({
-      tenantId: options.tenantId || 'default',
-      apiUrl: options.serverUrl,
-      authUrl: options.authUrl,
-      logsUrl: options.logsUrl
-    });
-
-    // Authenticate with API key if provided
-    if (options.apiKey) {
-      this.client.authenticateWithApiKey(options.apiKey)
-        .catch(error => console.error('Error authenticating with API key:', error));
-    }
+    this.client = new NeuralLogClient(
+      options.serverUrl || 'http://localhost:3030',
+      options.authUrl || 'http://localhost:3040',
+      options.tenantId || 'default',
+      options.apiKey
+    );
 
     // Initialize with master secret if provided
     if (options.masterSecret) {
@@ -244,7 +238,7 @@ export class AILogger {
    */
   public async getEntries(limit: number = 100): Promise<any[]> {
     try {
-      return await this.client.getLogs(this.logName, { limit });
+      return await this.client.getLogs(this.logName, limit);
     } catch (error) {
       console.error(`Error getting log entries for ${this.logName}: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
@@ -259,12 +253,13 @@ export class AILogger {
    */
   public async search(criteria: SearchCriteria = {}): Promise<any[]> {
     try {
-      return await this.client.searchLogs(criteria.logName || this.logName, {
+      return await this.client.search({
+        logName: criteria.logName || this.logName,
         query: criteria.query || '',
         limit: criteria.limit,
         startTime: criteria.startTime,
         endTime: criteria.endTime,
-        fields: criteria.fieldFilters ? Object.keys(criteria.fieldFilters) : undefined
+        fieldFilters: criteria.fieldFilters
       });
     } catch (error) {
       console.error(`Error searching logs: ${error instanceof Error ? error.message : String(error)}`);
@@ -283,24 +278,18 @@ export class AILogger {
   public static async getLogs(options: {
     serverUrl?: string;
     authUrl?: string;
-    logsUrl?: string;
     tenantId?: string;
     apiKey?: string;
     limit?: number;
   } = {}): Promise<string[]> {
     try {
       // Create a temporary client
-      const client = new NeuralLogClient({
-        tenantId: options.tenantId || 'default',
-        apiUrl: options.serverUrl,
-        authUrl: options.authUrl,
-        logsUrl: options.logsUrl
-      });
-
-      // Authenticate if API key is provided
-      if (options.apiKey) {
-        await client.authenticateWithApiKey(options.apiKey);
-      }
+      const client = new NeuralLogClient(
+        options.serverUrl || 'http://localhost:3030',
+        options.authUrl || 'http://localhost:3040',
+        options.tenantId || 'default',
+        options.apiKey
+      );
 
       // Get log names
       return await client.getLogNames();

@@ -39,10 +39,12 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       try {
-        // Get the tenant ID from Redis
-        const initialTenantId = await getServerTenantId();
-        if (initialTenantId) {
-          setTenantId(initialTenantId);
+        // Only load tenant ID on the client side (not during build)
+        if (typeof window !== 'undefined') {
+          const initialTenantId = await getServerTenantId();
+          if (initialTenantId) {
+            setTenantId(initialTenantId);
+          }
         }
       } catch (err) {
         console.error('Failed to load tenant ID:', err);

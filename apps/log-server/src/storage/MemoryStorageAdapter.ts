@@ -1,6 +1,6 @@
 import { StorageAdapter } from './StorageAdapter';
 import logger from '../utils/logger';
-import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '@neurallog/client-sdk/dist/types/api';
+import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '../types/log';
 import { v4 as uuidv4 } from 'uuid';
 
 // Server namespace prefix for all data
@@ -77,6 +77,7 @@ export class MemoryStorageAdapter implements StorageAdapter {
       const entry: LogEntry = {
         id: logId,
         logId: logName,
+        message: '', // Empty message for encrypted data
         data: encryptedData,
         timestamp: new Date().toISOString()
       };
@@ -542,7 +543,7 @@ export class MemoryStorageAdapter implements StorageAdapter {
     };
 
     // Get or create tenant logs
-    const tenantId = log.tenantId;
+    const tenantId = log.tenantId || 'default';
     if (!this.tenantLogs.has(tenantId)) {
       this.tenantLogs.set(tenantId, new Map());
     }
@@ -602,7 +603,7 @@ export class MemoryStorageAdapter implements StorageAdapter {
   public async updateLog(log: Log): Promise<Log> {
     await this.initialize();
 
-    const tenantId = log.tenantId;
+    const tenantId = log.tenantId || 'default';
     const name = log.name;
 
     // Get tenant logs

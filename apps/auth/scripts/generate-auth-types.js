@@ -15,7 +15,7 @@ const yaml = require('js-yaml');
 
 // Paths
 const OPENAPI_PATH = path.resolve(__dirname, '../src/openapi.yaml');
-const TYPES_OUTPUT_PATH = path.resolve(__dirname, '../../typescript-client-sdk/src/types/auth.ts');
+const TYPES_OUTPUT_PATH = path.resolve(__dirname, '../../../sdks/typescript-client-sdk/src/types/auth.ts');
 
 // Read OpenAPI schema
 console.log('Reading OpenAPI schema from', OPENAPI_PATH);

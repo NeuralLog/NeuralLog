@@ -1,5 +1,5 @@
 import { StorageAdapter } from './StorageAdapter';
-import { Log } from '@neurallog/client-sdk/dist/types/api';
+import { Log } from '@neurallog/client-sdk';
 import { MemoryStorageAdapter } from './MemoryStorageAdapter';
 import { NeDBStorageAdapter } from './NeDBStorageAdapter';
 import { RedisStorageAdapter, RedisOptions } from './RedisStorageAdapter';

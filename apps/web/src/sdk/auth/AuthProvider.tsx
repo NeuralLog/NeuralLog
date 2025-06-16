@@ -83,8 +83,10 @@ export function AuthProvider({ children, options = {} }: AuthProviderProps) {
         // Create a new auth client
         const newClient = new AuthClient(options);
         
-        // Initialize the client
-        await newClient.initialize();
+        // Only initialize on the client side (not during build)
+        if (typeof window !== 'undefined') {
+          await newClient.initialize();
+        }
         
         setClient(newClient);
         setIsInitialized(true);

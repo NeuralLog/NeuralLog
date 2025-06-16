@@ -5,7 +5,7 @@ import {
   LogSearchOptions,
   PaginatedResult,
   BatchAppendResult
-} from '@neurallog/client-sdk/dist/types/api';
+} from '../types/log';
 import logger from '../utils/logger';
 // Create a LogError class
 class LogError extends Error {

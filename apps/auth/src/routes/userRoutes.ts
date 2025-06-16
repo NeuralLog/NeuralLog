@@ -4,7 +4,7 @@ import { apiKeyService } from '../services/ApiKeyService';
 import { roleService } from '../services/roleService';
 import { authMiddleware } from '../middleware/AuthMiddleware';
 import { ApiError } from '../utils/errors';
-import type { UserProfile } from '@neurallog/client-sdk';
+import type { UserProfile } from '../types/auth';
 
 const router = Router();
 

@@ -15,7 +15,7 @@ const yaml = require('js-yaml');
 
 // Paths
 const OPENAPI_PATH = path.resolve(__dirname, '../src/openapi.yaml');
-const TYPES_OUTPUT_PATH = path.resolve(__dirname, '../../typescript-client-sdk/src/types/log.ts');
+const TYPES_OUTPUT_PATH = path.resolve(__dirname, '../../../sdks/typescript-client-sdk/src/types/log.ts');
 
 // Read OpenAPI schema
 console.log('Reading OpenAPI schema from', OPENAPI_PATH);
@@ -151,30 +151,6 @@ export type UpdateLogData = Log;
 export type DeleteLogData = any;
 export type GetLogEntriesData = PaginatedLogEntries;
 export type SearchLogEntriesData = PaginatedLogEntries;
-
-// Redefine PaginatedLogEntries to match PaginatedResult<LogEntry>
-export interface PaginatedLogEntries {
-  /** Result items */
-  items?: LogEntry[];
-
-  /** Result entries (alias for items for backward compatibility) */
-  entries: LogEntry[];
-
-  /** Total count */
-  total: number;
-
-  /** Total count (alias for total for backward compatibility) */
-  totalCount: number;
-
-  /** Result limit */
-  limit: number;
-
-  /** Result offset */
-  offset: number;
-
-  /** Whether there are more results */
-  hasMore?: boolean;
-}
 
 export interface GetLogEntriesParams {
   /**

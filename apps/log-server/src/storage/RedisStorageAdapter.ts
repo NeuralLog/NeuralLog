@@ -1,8 +1,8 @@
 import { StorageAdapter } from './StorageAdapter';
 import Redis from 'ioredis';
 import logger from '../utils/logger';
-import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '@neurallog/client-sdk/dist/types/api';
-import { LogMetadataService } from '../services/LogMetadataService';
+import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '../types/log';
+// LogMetadataService not available - removed import
 
 // Server namespace prefix for all keys
 const SERVER_NAMESPACE = 'logserver';
@@ -111,6 +111,7 @@ export class RedisStorageAdapter implements StorageAdapter {
       const document: LogEntry = {
         id: logId,
         logId: logName,
+        message: '', // Empty message for encrypted data
         data: encryptedData,
         timestamp: new Date().toISOString()
       };

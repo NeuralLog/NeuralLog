@@ -3,6 +3,72 @@
  */
 
 /**
+ * Log levels
+ */
+export enum LogLevel {
+  DEBUG = 'debug',
+  INFO = 'info',
+  WARN = 'warn',
+  ERROR = 'error',
+  FATAL = 'fatal'
+}
+
+/**
+ * Log entry
+ */
+export interface LogEntry {
+  /**
+   * Entry ID
+   */
+  id?: string;
+
+  /**
+   * Log level
+   */
+  level: string;
+
+  /**
+   * Log message
+   */
+  message: string;
+
+  /**
+   * Timestamp
+   */
+  timestamp: string;
+
+  /**
+   * Additional data
+   */
+  [key: string]: any;
+}
+
+/**
+ * Log response
+ */
+export interface LogResponse {
+  /**
+   * Log entries
+   */
+  entries: LogEntry[];
+
+  /**
+   * Total count
+   */
+  total?: number;
+}
+
+/**
+ * Log names response
+ */
+export interface LogNamesResponse {
+  /**
+   * Log names
+   */
+  logs: string[];
+}
+
+/**
  * Aggregate statistics
  */
 export interface AggregateStatistics {

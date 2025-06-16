@@ -35,6 +35,11 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
   // Initialize from localStorage if available
   useEffect(() => {
     const initFromStorage = async () => {
+      // Only access localStorage on the client side (not during build)
+      if (typeof window === 'undefined') {
+        return;
+      }
+
       const storedMasterSecret = localStorage.getItem('neurallog_master_secret');
       const storedTenantId = localStorage.getItem('neurallog_tenant_id');
 
@@ -64,9 +69,11 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
       setTenantId(tenant);
       setIsInitialized(true);
       
-      // Store in localStorage for persistence
-      localStorage.setItem('neurallog_master_secret', secret);
-      localStorage.setItem('neurallog_tenant_id', tenant);
+      // Store in localStorage for persistence (only on client side)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('neurallog_master_secret', secret);
+        localStorage.setItem('neurallog_tenant_id', tenant);
+      }
       
       console.log('Key hierarchy initialized successfully');
     } catch (error) {

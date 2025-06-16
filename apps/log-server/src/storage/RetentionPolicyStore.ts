@@ -2,7 +2,9 @@ import Datastore from 'nedb';
 import path from 'path';
 import fs from 'fs';
 import logger from '../utils/logger';
-import configService from '../services/ConfigService';
+import { ConfigService } from '../services/ConfigService';
+
+const configService = new ConfigService();
 
 /**
  * Retention policy interface
@@ -51,6 +53,14 @@ export class RetentionPolicyStore {
     this.db.ensureIndex({ fieldName: 'tenantId', unique: true });
 
     this.initialized = true;
+  }
+
+  /**
+   * Initialize the retention policy store
+   */
+  public async initialize(): Promise<void> {
+    // Already initialized in constructor
+    return Promise.resolve();
   }
 
   /**
@@ -105,7 +115,8 @@ export class RetentionPolicyStore {
   public async setRetentionPolicy(
     tenantId: string,
     retentionPeriodMs: number,
-    logName?: string
+    logName?: string,
+    userId: string = 'system'
   ): Promise<RetentionPolicy> {
     // Get the maximum allowed retention period from config
     const maxRetentionPeriodMs = configService.getMaxRetentionPeriodMs();
@@ -250,13 +261,13 @@ export class RetentionPolicyStore {
    */
   public async getAllRetentionPolicies(tenantId: string): Promise<RetentionPolicy[]> {
     return new Promise((resolve, reject) => {
-      this.db.find({ tenantId }, (err, docs) => {
+      this.db.find({ tenantId }, (err: any, docs: any) => {
         if (err) {
           logger.error(`Error getting all retention policies for tenant ${tenantId}:`, err);
           return reject(err);
         }
 
-        resolve(docs.map(doc => ({
+        resolve(docs.map((doc: any) => ({
           tenantId: doc.tenantId,
           logName: doc.logName,
           retentionPeriodMs: doc.retentionPeriodMs,
@@ -269,30 +280,5 @@ export class RetentionPolicyStore {
     });
   }
 
-  /**
-   * Get all retention policies for a tenant
-   *
-   * @param tenantId Tenant ID
-   * @returns Array of retention policies
-   */
-  public async getAllRetentionPolicies(tenantId: string): Promise<RetentionPolicy[]> {
-    return new Promise((resolve, reject) => {
-      this.db.find({ tenantId }, (err, docs) => {
-        if (err) {
-          logger.error(`Error getting all retention policies for tenant ${tenantId}:`, err);
-          return reject(err);
-        }
 
-        resolve(docs.map(doc => ({
-          tenantId: doc.tenantId,
-          logName: doc.logName,
-          retentionPeriodMs: doc.retentionPeriodMs,
-          createdAt: doc.createdAt,
-          updatedAt: doc.updatedAt,
-          createdBy: doc.createdBy,
-          updatedBy: doc.updatedBy
-        })));
-      });
-    });
-  }
 }

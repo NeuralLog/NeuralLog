@@ -3,7 +3,7 @@ import Datastore from 'nedb';
 import fs from 'fs';
 import path from 'path';
 import logger from '../utils/logger';
-import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '@neurallog/client-sdk/dist/types/api';
+import { Log, LogEntry, LogSearchOptions, PaginatedResult, BatchAppendResult } from '../types/log';
 
 // Server namespace prefix for all data
 const SERVER_NAMESPACE = 'logserver';
@@ -568,9 +568,10 @@ export class NeDBStorageAdapter implements StorageAdapter {
       const document: LogEntry = {
         id: logId,
         logId: logName,
+        message: '', // Empty message for encrypted data
         data: encryptedData,
         timestamp: new Date().toISOString(),
-        createdAt: Date.now() // Store creation timestamp for data retention
+        createdAt: new Date().toISOString() // Store creation timestamp for data retention
       };
 
       // Insert the document

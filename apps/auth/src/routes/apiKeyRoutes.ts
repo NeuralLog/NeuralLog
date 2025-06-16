@@ -5,7 +5,7 @@ import { userService } from '../services/UserService';
 import { authMiddleware } from '../middleware/AuthMiddleware';
 import { ApiError } from '../utils/errors';
 import { randomBytes } from 'crypto';
-import { UserProfile } from '@neurallog/client-sdk';
+import { UserProfile } from '../types/auth';
 
 // Store challenges in memory (in a real implementation, use Redis or another distributed cache)
 const challenges: Map<string, { challenge: string, expiresAt: number }> = new Map();
@@ -398,7 +398,7 @@ router.get('/users/:userId/profile', async (req: Request, res: Response, next: N
       id: user.id,
       email: user.email,
       tenantId: user.tenantId,
-      name: user.name || undefined
+      name: user.name || ''
     };
     res.json(userProfile);
   } catch (error) {

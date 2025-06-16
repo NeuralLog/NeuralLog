@@ -3,7 +3,7 @@ import { logger } from './logger';
 import { zkpApiKeyService } from './zkpApiKeyService';
 import { db } from '../db';
 import { UserService } from './UserService';
-import { ApiKey } from '@neurallog/client-sdk';
+import { ApiKey } from '../types/auth';
 
 /**
  * API Key Service
@@ -37,8 +37,8 @@ export class ApiKeyService {
         name,
         scopes,
         verificationHash,
-        createdAt: new Date(),
-        expiresAt,
+        createdAt: new Date().toISOString(),
+        expiresAt: expiresAt.toISOString(),
         revoked: false
       };
 
@@ -122,7 +122,7 @@ export class ApiKeyService {
 
       // Update the API key
       apiKey.revoked = true;
-      apiKey.revokedAt = new Date();
+      apiKey.revokedAt = new Date().toISOString();
 
       // Save the updated API key
       await db.setJSON(`${this.API_KEY_PREFIX}${keyId}`, apiKey);
@@ -179,7 +179,7 @@ export class ApiKeyService {
       for (const apiKey of apiKeys) {
         if (!apiKey.revoked) {
           apiKey.revoked = true;
-          apiKey.revokedAt = new Date();
+          apiKey.revokedAt = new Date().toISOString();
 
           // Save the updated API key
           await db.setJSON(`${this.API_KEY_PREFIX}${apiKey.id}`, apiKey);
@@ -213,7 +213,7 @@ export class ApiKeyService {
       for (const apiKey of apiKeys) {
         if (!apiKey.revoked) {
           apiKey.revoked = true;
-          apiKey.revokedAt = new Date();
+          apiKey.revokedAt = new Date().toISOString();
 
           // Save the updated API key
           await db.setJSON(`${this.API_KEY_PREFIX}${apiKey.id}`, apiKey);
@@ -278,7 +278,7 @@ export class ApiKeyService {
       }
 
       // Check if the API key has expired
-      if (keyData.expiresAt < new Date()) {
+      if (new Date(keyData.expiresAt) < new Date()) {
         return null;
       }
 
@@ -296,7 +296,7 @@ export class ApiKeyService {
       }
 
       // Update the last used timestamp
-      keyData.lastUsedAt = new Date();
+      keyData.lastUsedAt = new Date().toISOString();
       await db.setJSON(`${this.API_KEY_PREFIX}${keyId}`, keyData);
 
       return {

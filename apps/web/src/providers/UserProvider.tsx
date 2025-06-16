@@ -49,8 +49,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
+      // Only load user on the client side (not during build)
+      if (typeof window !== 'undefined') {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      }
     } catch (err) {
       console.error('Failed to load user:', err);
       setError(err instanceof Error ? err : new Error('Failed to load user'));
