@@ -51,34 +51,51 @@ class InvitationService {
   }
 
   /**
+   * Generate a UUID (build-safe)
+   */
+  private generateUUID(): string {
+    // During build time, crypto might not be available
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+
+    // Fallback UUID generation for build time
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  /**
    * Create a new invitation
    */
   async createInvitation(email: string, invitedBy: string): Promise<Invitation> {
     // Get existing invitations
     const invitations = await this.getInvitations();
-    
+
     // Check if an invitation already exists for this email
     const existingInvitation = invitations.find(
       invitation => invitation.email === email && !invitation.used
     );
-    
+
     if (existingInvitation) {
       return existingInvitation;
     }
-    
+
     // Create a new invitation
     const invitation: Invitation = {
-      id: crypto.randomUUID(),
+      id: this.generateUUID(),
       email,
       invitedBy,
       createdAt: new Date(),
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       used: false
     };
-    
+
     // Save the invitation
     await this.saveInvitations([...invitations, invitation]);
-    
+
     return invitation;
   }
 
