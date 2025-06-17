@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "NeuralLog - Tenant Dashboard",
-  description: "NeuralLog tenant dashboard for managing AI logging",
+  title: "NeuralLog",
+  description: "NeuralLog",
 };
 
 export default function RootLayout({

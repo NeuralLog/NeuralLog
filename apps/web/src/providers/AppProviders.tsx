@@ -13,9 +13,32 @@ import { CryptoProvider } from '../components/crypto';
  * This should be used at the root of the application
  */
 export function AppProviders({ children }: { children: React.ReactNode }) {
+  // During build time, only provide the theme provider to avoid API calls
+  const isBuildTime = typeof window === 'undefined' && process.env.NODE_ENV === 'production';
+
+  if (isBuildTime) {
+    return (
+      <ThemeProvider>
+        {children}
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider>
-      {children}
+      <TenantProvider>
+        <UserProvider>
+          {/* Authentication Context (Login/Logout/User State) */}
+          <AuthenticationProvider>
+            {/* Authorization Context (Permissions/Roles via SDK) */}
+            <AuthorizationProvider>
+              <CryptoProvider>
+                {children}
+              </CryptoProvider>
+            </AuthorizationProvider>
+          </AuthenticationProvider>
+        </UserProvider>
+      </TenantProvider>
     </ThemeProvider>
   );
 }
